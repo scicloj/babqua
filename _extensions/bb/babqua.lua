@@ -378,6 +378,84 @@ local function bb_available()
   return ok == true or ok == 0
 end
 
+-- ----- persistent (nREPL preview) mode --------------------------------
+--
+-- Babqua has two evaluation paths:
+--   1. **One-shot** — spawn `bb` with the eval script directly. Used for
+--      `quarto render` and any session where the user hasn't started a
+--      persistent REPL.
+--   2. **Persistent** — when the lifecycle script (`babqua-lifecycle.bb
+--      start`) has spawned a long-lived bb nREPL, the filter detects
+--      `.babqua-nrepl-port` + a live `.babqua-pid` and forwards the same
+--      eval script through `babqua-nrepl-client.bb`. Defs accumulate
+--      across renders the way they do in Clay/Janqua.
+--
+-- Mode is decided per-render solely by port-file presence and PID
+-- liveness. There's no Quarto-preview env-var sniff (Quarto 1.9 doesn't
+-- expose one to filters), and no auto-start — the user opts into
+-- persistence explicitly with the lifecycle script.
+
+local function read_number_file(path)
+  local f = io.open(path, "r")
+  if not f then return nil end
+  local s = f:read("*a") or ""
+  f:close()
+  s = s:gsub("%s+", "")
+  if s:match("^%d+$") then return s end
+  return nil
+end
+
+local function pid_alive(pid)
+  local ok = os.execute("kill -0 " .. pid .. " >/dev/null 2>&1")
+  return ok == true or ok == 0
+end
+
+-- Discover the live nREPL port for this project root, or nil if no
+-- persistent REPL is running. Cleans up stale PID/port files when the
+-- referenced process is dead so the next render doesn't keep tripping
+-- on them.
+local function live_nrepl_port()
+  if not project_root then return nil end
+  local pid = read_number_file(project_root .. "/.babqua-pid")
+  local port = read_number_file(project_root .. "/.babqua-nrepl-port")
+  if pid and port and pid_alive(pid) then return port end
+  if pid and not pid_alive(pid) then
+    -- Stale leftovers — let the lifecycle script's next start handle
+    -- cleanup, but warn so the user knows preview mode is silently off.
+    io.stderr:write("[babqua] Stale .babqua-pid (PID " .. pid
+      .. " not alive) — falling back to one-shot mode.\n")
+  end
+  return nil
+end
+
+local function lifecycle_script_path()
+  local script_dir = PANDOC_SCRIPT_FILE:match("(.*[/\\])") or "./"
+  return script_dir .. "babqua-lifecycle.bb"
+end
+
+local function nrepl_client_path()
+  local script_dir = PANDOC_SCRIPT_FILE:match("(.*[/\\])") or "./"
+  return script_dir .. "babqua-nrepl-client.bb"
+end
+
+-- `babqua: { reset-on-render: true }` in frontmatter — Janqua-equivalent
+-- escape hatch for users who want a fresh process each render. Stops
+-- the running session before this render begins so the next render
+-- starts cold and the user must explicitly restart for persistence.
+local function reset_on_render_requested(meta)
+  if not (meta and meta.babqua) then return false end
+  local opt = meta.babqua["reset-on-render"]
+  if opt == nil then return false end
+  return parse_bool(pandoc.utils.stringify(opt)) == true
+end
+
+local function stop_lifecycle()
+  local cmd = "BABQUA_PROJECT_ROOT=" .. shell_quote(project_root) .. " "
+    .. "bb " .. shell_quote(lifecycle_script_path()) .. " stop"
+    .. " >/dev/null 2>&1"
+  os.execute(cmd)
+end
+
 -- Build the Clojure script that loads the runtime and calls run-blocks
 -- on the collected sources. Output is one line of JSON: an array of
 -- per-block result maps.
@@ -400,7 +478,14 @@ local function build_bb_script(runtime_path, eval_sources)
 end
 
 -- Invoke bb on the script. Returns (stdout, stderr, ok).
-local function run_bb(script_text)
+--
+-- One-shot path: `bb <script_file>` — fresh bb, fresh user ns.
+-- Persistent path (when nrepl_port is non-nil): pipe the same script to
+-- `bb babqua-nrepl-client.bb <port>`, which forwards it as one nREPL
+-- eval. The runtime's `(println (json/generate-string ...))` becomes
+-- one or more `:out` chunks, and the client relays them to its own
+-- stdout — so the JSON-extraction logic downstream is identical.
+local function run_bb(script_text, nrepl_port)
   local script_file = os.tmpname() .. ".bb"
   local stdout_file = os.tmpname()
   local stderr_file = os.tmpname()
@@ -412,10 +497,20 @@ local function run_bb(script_text)
   f:write(script_text)
   f:close()
 
-  local cmd = "cd " .. shell_quote(project_root)
-    .. " && bb " .. shell_quote(script_file)
-    .. " > " .. shell_quote(stdout_file)
-    .. " 2> " .. shell_quote(stderr_file)
+  local cmd
+  if nrepl_port then
+    cmd = "cd " .. shell_quote(project_root)
+      .. " && bb " .. shell_quote(nrepl_client_path())
+      .. " " .. nrepl_port
+      .. " < " .. shell_quote(script_file)
+      .. " > " .. shell_quote(stdout_file)
+      .. " 2> " .. shell_quote(stderr_file)
+  else
+    cmd = "cd " .. shell_quote(project_root)
+      .. " && bb " .. shell_quote(script_file)
+      .. " > " .. shell_quote(stdout_file)
+      .. " 2> " .. shell_quote(stderr_file)
+  end
   local ok = os.execute(cmd)
   ok = (ok == true or ok == 0)
 
@@ -447,6 +542,14 @@ local function ensure_json_decoder()
   return false
 end
 
+-- Set in pass2_run_bb when reset-on-render is requested via frontmatter.
+-- Read here so run_evaluations can stop the running session before
+-- resolving the port, matching Janqua's reset semantics.
+local reset_requested = false
+-- Set in run_evaluations from live_nrepl_port(); read by run_bb to
+-- decide between one-shot and nrepl-client invocation.
+local persistent_port = nil
+
 local function run_evaluations()
   if #block_sources == 0 then return end
 
@@ -472,6 +575,23 @@ local function run_evaluations()
     return
   end
 
+  -- Resolve evaluation mode. `reset-on-render` short-circuits any live
+  -- REPL so this render starts cold and the user has to manually
+  -- restart for persistence — same shape as Janqua's reset-on-render.
+  if reset_requested then
+    if live_nrepl_port() then
+      io.stderr:write("[babqua] reset-on-render: stopping persistent bb nREPL.\n")
+      stop_lifecycle()
+    end
+    persistent_port = nil
+  else
+    persistent_port = live_nrepl_port()
+    if persistent_port then
+      io.stderr:write("[babqua] Using persistent bb nREPL on port "
+        .. persistent_port .. " (state accumulates across renders).\n")
+    end
+  end
+
   -- Filter to only blocks marked for eval, recording where each result
   -- will land so pass 2's CodeBlock can index back.
   local eval_sources = {}
@@ -489,7 +609,7 @@ local function run_evaluations()
   local runtime_path = script_dir .. "runtime.bb"
 
   local script = build_bb_script(runtime_path, eval_sources)
-  local stdout, stderr, ok = run_bb(script)
+  local stdout, stderr, ok = run_bb(script, persistent_port)
 
   if not ok then
     print_loud({
@@ -733,6 +853,7 @@ local function pass2_run_bb(doc)
   if not html_target() then return doc end
   project_root = resolve_project_root()
   read_meta_defaults(doc.meta)
+  reset_requested = reset_on_render_requested(doc.meta)
   run_evaluations()
   block_counter = 0
   return doc
