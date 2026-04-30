@@ -38,7 +38,12 @@ when the value isn't tagged with Kindly metadata:
 | `output=hidden` | Suppress both source and result |
 
 When both `:kindly/kind` metadata on the value and `output=` on the
-fence are set, the Kindly metadata wins.
+fence are set, `output=` wins. The fence attribute is the more
+explicit, local signal — treating it as an override matches Quarto's
+own pattern of per-block attributes taking precedence over
+document-level defaults. This is also the escape hatch for inspecting
+a value that's tagged for chart rendering: `output=html` shows the
+JSON spec; `output=hidden` suppresses the cell entirely.
 
 See the
 [Quarto documentation on code cells](https://quarto.org/docs/reference/cells/)

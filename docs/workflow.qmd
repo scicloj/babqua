@@ -34,14 +34,14 @@ keeps state warm across saves:
 
 ```bash
 # Start once per session (typically before `quarto preview`)
-bb _extensions/bb/babqua-lifecycle.bb start
+bb _extensions/scicloj/bb/babqua-lifecycle.bb start
 
 # Now run preview as normal — the filter detects the live REPL and
 # routes evaluations through it.
 quarto preview hello.qmd
 
 # When you're done, tear it down.
-bb _extensions/bb/babqua-lifecycle.bb stop
+bb _extensions/scicloj/bb/babqua-lifecycle.bb stop
 ```
 
 While the persistent session is running, `def`s and `require`s carry

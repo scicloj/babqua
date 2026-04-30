@@ -31,7 +31,8 @@ That's it. No JVM, no `bbin`, no nREPL client to install.
 
 ## Quick start
 
-Install the extension in your project:
+Install the extension in your project (Quarto will ask you to confirm —
+type `y` and press Enter):
 
 ```bash
 quarto add scicloj/babqua

@@ -44,6 +44,7 @@ local default_hide_stdout = nil
 local block_sources = {}   -- filled in pass 1: { {src, attrs, eval, result_idx} ... }
 local block_results = nil  -- filled in pass 2 Meta: array from bb
 local block_counter = 0    -- incremented per .bb block in pass 2 CodeBlock
+local eval_failure_reason = nil  -- short cause string when block_results is nil
 local cdn_emitted = {}
 local div_counter = 0
 
@@ -485,42 +486,46 @@ end
 -- eval. The runtime's `(println (json/generate-string ...))` becomes
 -- one or more `:out` chunks, and the client relays them to its own
 -- stdout — so the JSON-extraction logic downstream is identical.
+-- Temp files live inside a per-render mode-0700 directory created by
+-- `pandoc.system.with_temporary_directory`. `os.tmpname()` would return
+-- a name *without* creating the file on POSIX, leaving a window for a
+-- local attacker to plant a symlink at the path before `io.open(..., "w")`
+-- or the shell `>` redirection follows it.
 local function run_bb(script_text, nrepl_port)
-  local script_file = os.tmpname() .. ".bb"
-  local stdout_file = os.tmpname()
-  local stderr_file = os.tmpname()
+  local stdout, stderr, ok
+  pandoc.system.with_temporary_directory("babqua", function(dir)
+    local script_file = dir .. "/script.bb"
+    local stdout_file = dir .. "/stdout"
+    local stderr_file = dir .. "/stderr"
 
-  local f = io.open(script_file, "w")
-  if not f then
-    return nil, "Could not create temp script file", false
-  end
-  f:write(script_text)
-  f:close()
+    local f = io.open(script_file, "w")
+    if not f then
+      stdout, stderr, ok = nil, "Could not create temp script file", false
+      return
+    end
+    f:write(script_text)
+    f:close()
 
-  local cmd
-  if nrepl_port then
-    cmd = "cd " .. shell_quote(project_root)
-      .. " && bb " .. shell_quote(nrepl_client_path())
-      .. " " .. nrepl_port
-      .. " < " .. shell_quote(script_file)
-      .. " > " .. shell_quote(stdout_file)
-      .. " 2> " .. shell_quote(stderr_file)
-  else
-    cmd = "cd " .. shell_quote(project_root)
-      .. " && bb " .. shell_quote(script_file)
-      .. " > " .. shell_quote(stdout_file)
-      .. " 2> " .. shell_quote(stderr_file)
-  end
-  local ok = os.execute(cmd)
-  ok = (ok == true or ok == 0)
+    local cmd
+    if nrepl_port then
+      cmd = "cd " .. shell_quote(project_root)
+        .. " && bb " .. shell_quote(nrepl_client_path())
+        .. " " .. nrepl_port
+        .. " < " .. shell_quote(script_file)
+        .. " > " .. shell_quote(stdout_file)
+        .. " 2> " .. shell_quote(stderr_file)
+    else
+      cmd = "cd " .. shell_quote(project_root)
+        .. " && bb " .. shell_quote(script_file)
+        .. " > " .. shell_quote(stdout_file)
+        .. " 2> " .. shell_quote(stderr_file)
+    end
+    local ok_exec = os.execute(cmd)
+    ok = (ok_exec == true or ok_exec == 0)
 
-  local stdout = read_file(stdout_file)
-  local stderr = read_file(stderr_file)
-
-  os.remove(script_file)
-  os.remove(stdout_file)
-  os.remove(stderr_file)
-
+    stdout = read_file(stdout_file)
+    stderr = read_file(stderr_file)
+  end)
   return stdout, stderr, ok
 end
 
@@ -560,6 +565,7 @@ local function run_evaluations()
       "",
       "Install from: https://babashka.org",
     })
+    eval_failure_reason = "`bb` is not on PATH. Install Babashka from https://babashka.org."
     block_results = nil
     return
   end
@@ -571,6 +577,7 @@ local function run_evaluations()
       "",
       "Upgrade Quarto / Pandoc to a version with pandoc.json (Pandoc 2.18+).",
     })
+    eval_failure_reason = "`pandoc.json` is unavailable. Upgrade Quarto/Pandoc to a build with Pandoc 2.18+."
     block_results = nil
     return
   end
@@ -628,6 +635,7 @@ local function run_evaluations()
       "stderr:",
       (stderr or ""):sub(1, 1000),
     })
+    eval_failure_reason = "bb produced no JSON response. See the framed stderr block for the bb stdout/stderr."
     block_results = nil
     return
   end
@@ -640,6 +648,7 @@ local function run_evaluations()
       "Response (truncated):",
       json_line:sub(1, 1000),
     })
+    eval_failure_reason = "Could not decode bb's JSON response: " .. tostring(decoded)
     block_results = nil
     return
   end
@@ -649,6 +658,7 @@ local function run_evaluations()
       "ERROR: bb runtime hit a fatal error before evaluating any block:",
       tostring(decoded["babqua/fatal"]),
     })
+    eval_failure_reason = "bb runtime fatal error: " .. tostring(decoded["babqua/fatal"])
     block_results = nil
     return
   end
@@ -794,9 +804,11 @@ local function replace_block(el)
 
   if eval then
     if not block_results then
+      local detail = eval_failure_reason
+        or "See stderr above for the underlying error."
       table.insert(blocks, error_block(
         "Babqua could not evaluate this block (no results from bb).",
-        "See stderr above for the underlying error."))
+        detail))
     else
       local result = block_results[src_record.result_idx]
       if not result then
@@ -854,6 +866,7 @@ local function pass2_run_bb(doc)
   project_root = resolve_project_root()
   read_meta_defaults(doc.meta)
   reset_requested = reset_on_render_requested(doc.meta)
+  eval_failure_reason = nil
   run_evaluations()
   block_counter = 0
   return doc

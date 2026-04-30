@@ -192,7 +192,13 @@
                                           num-opts))))
           (catch Throwable e
             {:error (or (.getMessage e) (str e))
-             :stack (with-out-str (.printStackTrace e))}))
+             ;; `.printStackTrace` with no args writes to `System.err`, so
+             ;; `with-out-str` (which rebinds *out*) would capture nothing
+             ;; and the rendered error block would be just the message.
+             ;; Pass an explicit PrintWriter on the rebound *out* so the
+             ;; trace lands in `:stack`.
+             :stack (with-out-str
+                      (.printStackTrace e (java.io.PrintWriter. *out*)))}))
         stdout-str (.toString out)
         stdout (when (seq stdout-str) stdout-str)]
     (cond-> result

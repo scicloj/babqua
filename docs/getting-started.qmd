@@ -43,6 +43,8 @@ Run this **inside your project directory** — it creates an
 quarto add scicloj/babqua
 ```
 
+Quarto will ask you to confirm — type `y` and press Enter.
+
 Sanity check that the filter files landed:
 
 ```bash
@@ -93,6 +95,14 @@ This launches a single Babashka process, evaluates the code blocks in
 order, and produces `hello.html`. Babashka's startup cost is small
 enough (tens of milliseconds) that there's no persistent process to
 manage — each render is fresh.
+
+## Trust model
+
+Rendering a Babqua document evaluates its `.bb` blocks as ordinary
+Babashka code, with full filesystem, network, and shell access. Treat
+rendering an untrusted `.qmd` the same as running its author's bb
+script on your machine — the same trust model as Clay or any other
+notebook environment that evaluates user code.
 
 ## Next steps
 

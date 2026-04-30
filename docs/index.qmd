@@ -74,8 +74,9 @@ against the actual rendering work.
 - **Research reports and data analysis** — figures, tables, math, and
   prose in a single reproducible document
 - **Interactive exploration** — iterate quickly with `quarto render`
-  on save, or reach for `quarto preview` once nREPL preview mode
-  lands
+  on save, or use `quarto preview` for live re-rendering (with an
+  optional persistent bb session for warm state — see
+  [Workflow](workflow.qmd))
 - **Sharing on [Clojure Civitas](https://clojurecivitas.org/)** —
   Babashka posts on the Clojure community's collaborative space
 
