@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5&nbsp; How It Works – Babqua</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./demo.html" rel="next">
+<link href="./authoring.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-47c769d3d3297953383b17cda1be3526.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./how-it-works.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">How It Works</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Babqua</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/scicloj/babqua" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting-started.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Getting Started</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workflow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Workflow</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./kindly-kinds.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Kindly kinds</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./authoring.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Authoring Babqua documents</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./how-it-works.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">How It Works</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./demo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Demo</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./contributing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Contributing</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#architecture-overview" id="toc-architecture-overview" class="nav-link active" data-scroll-target="#architecture-overview"><span class="header-section-number">5.1</span> Architecture overview</a></li>
+  <li><a href="#three-filter-passes" id="toc-three-filter-passes" class="nav-link" data-scroll-target="#three-filter-passes"><span class="header-section-number">5.2</span> Three filter passes</a></li>
+  <li><a href="#bb-side-runtime" id="toc-bb-side-runtime" class="nav-link" data-scroll-target="#bb-side-runtime"><span class="header-section-number">5.3</span> bb-side runtime</a></li>
+  <li><a href="#two-invocation-paths" id="toc-two-invocation-paths" class="nav-link" data-scroll-target="#two-invocation-paths"><span class="header-section-number">5.4</span> Two invocation paths</a>
+  <ul class="collapse">
+  <li><a href="#one-shot" id="toc-one-shot" class="nav-link" data-scroll-target="#one-shot"><span class="header-section-number">5.4.1</span> One-shot</a></li>
+  <li><a href="#persistent" id="toc-persistent" class="nav-link" data-scroll-target="#persistent"><span class="header-section-number">5.4.2</span> Persistent</a></li>
+  </ul></li>
+  <li><a href="#filter-side-dispatch" id="toc-filter-side-dispatch" class="nav-link" data-scroll-target="#filter-side-dispatch"><span class="header-section-number">5.5</span> Filter-side dispatch</a></li>
+  <li><a href="#quarto-cell-directives" id="toc-quarto-cell-directives" class="nav-link" data-scroll-target="#quarto-cell-directives"><span class="header-section-number">5.6</span> Quarto cell directives</a></li>
+  <li><a href="#error-handling" id="toc-error-handling" class="nav-link" data-scroll-target="#error-handling"><span class="header-section-number">5.7</span> Error handling</a></li>
+  <li><a href="#what-stays-in-lua-what-moves-to-bb" id="toc-what-stays-in-lua-what-moves-to-bb" class="nav-link" data-scroll-target="#what-stays-in-lua-what-moves-to-bb"><span class="header-section-number">5.8</span> What stays in Lua, what moves to bb</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/scicloj/babqua/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">How It Works</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This chapter explains the internals of Babqua — how your <code>{.clojure .bb}</code> code blocks turn into rendered output.</p>
+<section id="architecture-overview" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="architecture-overview"><span class="header-section-number">5.1</span> Architecture overview</h2>
+<p>Babqua is a <a href="https://pandoc.org/lua-filters.html">Pandoc Lua filter</a>. When Quarto renders a <code>.qmd</code> file, it calls <a href="https://pandoc.org/">Pandoc</a> under the hood. Pandoc reads the document, builds an abstract syntax tree (AST), and runs any filters specified in the frontmatter. The Babqua filter intercepts code blocks marked with the <code>.bb</code> class, evaluates them through a single Babashka process, and replaces them with the appropriate output.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  qmd[.qmd file] --&gt; quarto[Quarto]
+  quarto --&gt; pandoc[Pandoc]
+  pandoc -- AST --&gt; lua[babqua.lua filter]
+  lua -- script --&gt; bb[bb runtime.bb]
+  bb -- JSON --&gt; lua
+  lua -- AST --&gt; pandoc
+  pandoc --&gt; out[HTML]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>Where Janqua bootstraps helper functions over the wire and parses Clojure-printed output, Babqua leans on Babashka’s batteries — hiccup, cheshire, EDN are all built in. The Lua filter stays thin: the bb-side runtime detects the Kindly kind and pre-renders the value into HTML / JSON / markdown, and the filter just inserts the result.</p>
+</section>
+<section id="three-filter-passes" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="three-filter-passes"><span class="header-section-number">5.2</span> Three filter passes</h2>
+<p>Pandoc visits Meta after Block elements within a single filter pass, which is awkward for a workflow that needs to evaluate all blocks together before rendering any of them. Babqua splits the work into three passes:</p>
+<ol type="1">
+<li><strong>Collect</strong> — every <code>.bb</code> block’s source is recorded into a module-level list.</li>
+<li><strong>Evaluate</strong> — a <code>Pandoc</code> function (which runs at the end of a pass) builds a single bb script that calls <code>babqua.runtime/run-blocks</code> on the collected sources, invokes <code>bb</code>, and stores the JSON response.</li>
+<li><strong>Replace</strong> — a fresh <code>CodeBlock</code> traversal indexes back into the stored results, dispatches by <code>:format</code>, and substitutes the rendered AST. The same pass injects <code>babqua.css</code> into <code>header-includes</code>.</li>
+</ol>
+</section>
+<section id="bb-side-runtime" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="bb-side-runtime"><span class="header-section-number">5.3</span> bb-side runtime</h2>
+<p><code>runtime.bb</code> lives next to the Lua filter and gets <code>load-file</code>’d into the bb process at the start of every render. It defines:</p>
+<ul>
+<li><code>babqua.runtime/eval-block</code> — wraps a single user-provided source string in <code>(do ...)</code>, reads it with <code>read-string</code>, evaluates it while capturing stdout into a <code>StringWriter</code>, inspects the metadata of the result, and dispatches by Kindly kind to a pre-rendering function.</li>
+<li><code>babqua.runtime/run-blocks</code> — switches <code>*ns*</code> to <code>user</code> (so defs persist in a clean namespace), then maps <code>eval-block</code> across the collected sources and returns a vector of result maps.</li>
+</ul>
+<p>The pre-rendering helpers are dialect-native: <code>hiccup2.core/html</code> for hiccup, <code>cheshire.core/generate-string</code> for chart JSON, an inline hiccup-based table renderer for <code>:kind/table</code>, plain string passthrough for <code>kind/html</code> / <code>kind/md</code> / <code>kind/mermaid</code> / <code>kind/graphviz</code> / <code>kind/tex</code> / <code>kind/code</code>. Each result carries:</p>
+<ul>
+<li><code>:kind</code> — the original Kindly kind keyword (string-encoded), or nil</li>
+<li><code>:format</code> — a directive the Lua filter dispatches on: <code>raw-html</code>, <code>chart</code>, <code>markdown</code>, <code>tex</code>, <code>mermaid</code>, <code>graphviz</code>, <code>code-display</code>, <code>code-default</code>, <code>hidden</code></li>
+<li><code>:rendered</code> — the pre-formed payload (an HTML string, a JSON string, a source string, or <code>pr-str</code> of the value)</li>
+<li><code>:lib</code> — for <code>chart</code>, the CDN library name (<code>vega-lite</code>, <code>plotly</code>, <code>echarts</code>, <code>cytoscape</code>, <code>highcharts</code>)</li>
+<li><code>:options</code> — width / height passed via the value’s <code>:kindly/options</code> metadata, integer-validated</li>
+<li><code>:stdout</code> — captured stdout, if any</li>
+<li><code>:error</code> / <code>:stack</code> — present instead of <code>:format</code> if eval threw</li>
+</ul>
+<p>The whole vector of results is serialized as JSON and printed on bb’s stdout. The Lua filter scans for the JSON line, decodes it via <code>pandoc.json.decode</code>, and dispatches.</p>
+</section>
+<section id="two-invocation-paths" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="two-invocation-paths"><span class="header-section-number">5.4</span> Two invocation paths</h2>
+<p>The runtime contract above is identical in both modes; only the delivery differs.</p>
+<section id="one-shot" class="level3" data-number="5.4.1">
+<h3 data-number="5.4.1" class="anchored" data-anchor-id="one-shot"><span class="header-section-number">5.4.1</span> One-shot</h3>
+<p>The default for <code>quarto render</code>. The filter writes the script to a temp file inside a per-render mode-0700 directory and runs <code>bb &lt;script&gt;</code> directly. A fresh bb starts, <code>load-file</code>s the runtime, evaluates the blocks, prints the JSON response, and exits.</p>
+</section>
+<section id="persistent" class="level3" data-number="5.4.2">
+<h3 data-number="5.4.2" class="anchored" data-anchor-id="persistent"><span class="header-section-number">5.4.2</span> Persistent</h3>
+<p>When <code>babqua-lifecycle.bb start</code> has spawned a long-lived <code>bb nrepl-server</code> (an <a href="https://nrepl.org/">nREPL</a> server, the standard Clojure remote-REPL protocol) and written <code>.babqua-pid</code> and <code>.babqua-nrepl-port</code> to the project root, the filter detects them and pipes the same script through <code>babqua-nrepl-client.bb &lt;port&gt;</code> instead.</p>
+<p>The client sends one <code>eval</code> op over <a href="https://en.wikipedia.org/wiki/Bencode">bencode</a> (nREPL’s wire format), relays the response’s <code>:out</code> chunks to its stdout, and exits. The runtime’s <code>(println …)</code> becomes nREPL <code>:out</code>; downstream JSON-extraction is unchanged.</p>
+<p>State accumulates across renders because the bb process keeps its <code>user</code> namespace warm. <code>babqua: { reset-on-render: true }</code> in frontmatter opts out per document — the filter stops the running session before that render and falls back to one-shot.</p>
+</section>
+</section>
+<section id="filter-side-dispatch" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="filter-side-dispatch"><span class="header-section-number">5.5</span> Filter-side dispatch</h2>
+<p>Most formats are direct insertions: <code>raw-html</code> becomes <code>pandoc.RawBlock("html", rendered)</code>, <code>markdown</code> is round-tripped through <code>pandoc.read(...,  "markdown")</code>, <code>code-display</code> becomes a <code>CodeBlock</code> with the <code>clojure</code> class.</p>
+<p><code>chart</code>, <code>mermaid</code>, and <code>graphviz</code> are wrapped client-side: the Lua filter emits a <code>&lt;div&gt;</code> with a unique id, the <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity">Subresource Integrity (SRI)</a>-pinned <code>&lt;script&gt;</code> tag for the relevant CDN library (deduplicated per document), and a small <code>&lt;script&gt;</code> block that hands the pre-rendered payload to the library.</p>
+<p>SRI works by attaching a content hash to each <code>&lt;script&gt;</code> tag — the browser refuses to execute the script if its bytes don’t match the pinned hash, protecting viewers against a CDN compromise or a malicious patch pushed under a loose version tag.</p>
+</section>
+<section id="quarto-cell-directives" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="quarto-cell-directives"><span class="header-section-number">5.6</span> Quarto cell directives</h2>
+<p>Quarto’s <code>#| key: value</code> syntax — the convention used by Jupyter and knitr engines — is also supported. Babqua’s collect pass parses leading <code>#|</code> lines into the block’s attributes (so <code>#| output: hidden</code> is equivalent to the fence attribute <code>output=hidden</code>) and strips them from the source bb sees.</p>
+</section>
+<section id="error-handling" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="error-handling"><span class="header-section-number">5.7</span> Error handling</h2>
+<p>When user code throws, the bb-side runtime catches it and returns an error map (<code>:error</code> + <code>:stack</code>) instead of a render payload. The Lua filter renders this as a visible <code>cell-output cell-output-error</code> block, mirroring how Quarto shows native cell errors. If the block’s fence has <code>echo=false</code>, the source is tucked into a collapsed <code>&lt;details&gt;</code> summary inside the error block so the failing source is still one click away.</p>
+<p>When the filter itself can’t proceed — <code>bb</code> not on PATH, <code>pandoc.json</code> unavailable, the JSON response unparseable — the problem is announced via a framed stderr block (so build logs flag it loudly) and each affected block in the rendered document gets a <code>cell-output-error</code> div pointing at the same root cause.</p>
+</section>
+<section id="what-stays-in-lua-what-moves-to-bb" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="what-stays-in-lua-what-moves-to-bb"><span class="header-section-number">5.8</span> What stays in Lua, what moves to bb</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Concern</th>
+<th>Lua filter</th>
+<th>bb runtime</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>AST manipulation</td>
+<td>yes</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>Project root resolution</td>
+<td>yes</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>bb script generation</td>
+<td>yes</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>JSON decoding (response)</td>
+<td>yes</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>CDN scripts and SRI</td>
+<td>yes</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>Chart wrapper / div ids</td>
+<td>yes</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>Hiccup → HTML</td>
+<td>—</td>
+<td>yes</td>
+</tr>
+<tr class="even">
+<td>Value → JSON (chart spec)</td>
+<td>—</td>
+<td>yes</td>
+</tr>
+<tr class="odd">
+<td>Kind detection</td>
+<td>—</td>
+<td>yes</td>
+</tr>
+<tr class="even">
+<td>Kind-to-format dispatch</td>
+<td>—</td>
+<td>yes</td>
+</tr>
+<tr class="odd">
+<td>Stdout capture</td>
+<td>—</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+<p>This division means Lua is the wrong place for data-shape decisions when the host language has a great library for them — and Babashka does. Adding a new kind that doesn’t need new CDN scripts is a runtime-only change.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./authoring.html" class="pagination-link" aria-label="Authoring Babqua documents">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Authoring Babqua documents</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./demo.html" class="pagination-link" aria-label="Demo">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Demo</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/scicloj/babqua/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
