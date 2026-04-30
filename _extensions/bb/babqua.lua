@@ -206,7 +206,7 @@ local function inject_header_css(meta)
   return meta
 end
 
--- ----- CDN scripts (verbatim from Janqua's pinned set) -----------------
+-- ----- CDN scripts -----------------------------------------------------
 
 -- Pinned CDN scripts with SRI integrity hashes. Loose version tags would
 -- silently follow upstream updates and provide no integrity check, so a
@@ -394,7 +394,7 @@ end
 --      start`) has spawned a long-lived bb nREPL, the filter detects
 --      `.babqua-nrepl-port` + a live `.babqua-pid` and forwards the same
 --      eval script through `babqua-nrepl-client.bb`. Defs accumulate
---      across renders the way they do in Clay/Janqua.
+--      across renders the way they would in any persistent REPL session.
 --
 -- Mode is decided per-render solely by port-file presence and PID
 -- liveness. There's no Quarto-preview env-var sniff (Quarto 1.9 doesn't
@@ -444,10 +444,10 @@ local function nrepl_client_path()
   return script_dir .. "babqua-nrepl-client.bb"
 end
 
--- `babqua: { reset-on-render: true }` in frontmatter — Janqua-equivalent
--- escape hatch for users who want a fresh process each render. Stops
--- the running session before this render begins so the next render
--- starts cold and the user must explicitly restart for persistence.
+-- `babqua: { reset-on-render: true }` in frontmatter — escape hatch
+-- for users who want a fresh process each render. Stops the running
+-- session before this render begins so the next render starts cold
+-- and the user must explicitly restart for persistence.
 local function reset_on_render_requested(meta)
   if not (meta and meta.babqua) then return false end
   local opt = meta.babqua["reset-on-render"]
@@ -554,7 +554,8 @@ end
 
 -- Set in pass2_run_bb when reset-on-render is requested via frontmatter.
 -- Read here so run_evaluations can stop the running session before
--- resolving the port, matching Janqua's reset semantics.
+-- resolving the port — that way the reset takes effect on this render,
+-- not the next.
 local reset_requested = false
 -- Set in run_evaluations from live_nrepl_port(); read by run_bb to
 -- decide between one-shot and nrepl-client invocation.
@@ -589,7 +590,7 @@ local function run_evaluations()
 
   -- Resolve evaluation mode. `reset-on-render` short-circuits any live
   -- REPL so this render starts cold and the user has to manually
-  -- restart for persistence — same shape as Janqua's reset-on-render.
+  -- restart for persistence.
   if reset_requested then
     if live_nrepl_port() then
       io.stderr:write("[babqua] reset-on-render: stopping persistent bb nREPL.\n")

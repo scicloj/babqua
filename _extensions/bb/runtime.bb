@@ -3,10 +3,9 @@
   metadata on the result, and pre-renders the value into a payload
   that the Lua filter can drop straight into the AST.
 
-  The big shift from Janqua is that hiccup→HTML and value→JSON happen
-  here, on the Babashka side, where they're one library call. The Lua
-  filter stays thin: dispatch by `:format`, manage CDN scripts, insert
-  the pre-formed payload."
+  Hiccup→HTML and value→JSON happen here, on the Babashka side, where
+  they're one library call. The Lua filter stays thin: dispatch by
+  `:format`, manage CDN scripts, insert the pre-formed payload."
   (:require [hiccup2.core :as hiccup]
             [cheshire.core :as json]
             [clojure.string :as str]))

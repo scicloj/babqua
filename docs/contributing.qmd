@@ -44,7 +44,19 @@ quarto render
 The symlinks are committed, so there's no setup script. A clean
 render produces `docs/_book/` with one HTML file per chapter.
 
-For a faster iteration loop while editing a single chapter:
+For live iteration as you edit:
+
+```bash
+cd docs && quarto preview
+```
+
+Quarto serves the book at a local URL and re-renders each chapter
+you save. For chapters with heavy `bb.edn` deps or pods, the
+optional persistent bb session described in
+[Workflow](workflow.qmd) keeps state warm across saves.
+
+Or render a single chapter directly for the fastest one-shot
+feedback:
 
 ```bash
 cd docs && quarto render demo.qmd
