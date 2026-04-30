@@ -15,6 +15,7 @@ book:
     - authoring.qmd
     - how-it-works.qmd
     - demo.qmd
+    - contributing.qmd
 
 format:
   html:

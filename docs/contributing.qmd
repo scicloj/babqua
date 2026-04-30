@@ -1,0 +1,78 @@
+# Contributing
+
+Notes for people working on Babqua itself. If you're here to *use*
+Babqua, start with [Getting Started](getting-started.qmd) instead.
+
+## Repo layout
+
+- `_extensions/bb/` — **source of truth** for the published
+  extension. The Lua filter (`babqua.lua`), bb-side runtime
+  (`runtime.bb`), lifecycle scripts (`babqua-lifecycle.bb`,
+  `babqua-nrepl-client.bb`), stylesheet (`babqua.css`), and the
+  Quarto metadata (`_extension.yml`) all live here.
+- `docs/` — this Quarto book. Each chapter is a `.qmd` file; the
+  filter renders the live `{.clojure .bb}` blocks against the
+  in-tree extension.
+- `docs/_extensions/bb/` — symlink shim pointing back to
+  `_extensions/bb/`. Quarto requires an `_extensions/` directory
+  adjacent to the `_quarto.yml` it's rendering, so the docs book
+  needs its own copy of the extension. The symlinks let the docs
+  pick up changes to the in-tree extension immediately, without
+  going through `quarto add`. **If you add a new file to
+  `_extensions/bb/`, mirror it as a symlink in
+  `docs/_extensions/bb/`.**
+- `dev-notes/` — design notes, gotchas, review personas, backlog.
+  Not part of the rendered book; not user-facing.
+
+The published install path is `_extensions/scicloj/bb/` (created by
+`quarto add scicloj/babqua`), one level deeper than the in-tree
+`_extensions/bb/`. Both layouts work because Quarto resolves a
+filter named `bb` by searching either form.
+
+## Local setup
+
+```bash
+git clone https://github.com/scicloj/babqua
+cd babqua/docs
+quarto render
+```
+
+The symlinks are committed, so there's no setup script. A clean
+render produces `docs/_book/` with one HTML file per chapter.
+
+For a faster iteration loop while editing a single chapter:
+
+```bash
+cd docs && quarto render demo.qmd
+```
+
+`demo.qmd` exercises every Kindly kind plus stdout, errors, and a
+live HTTP fetch — a good single-file smoke test.
+
+## Where to look
+
+| Question | File |
+|:---|:---|
+| Why does Babqua exist as a sibling to Janqua? What's the v1 cut? | `dev-notes/babqua-design.md` |
+| What's queued up but not yet done? | `dev-notes/backlog.md` |
+| Lua / Pandoc / Quarto gotchas the filter steps around | `dev-notes/lua-filter-gotchas.md` |
+| Sharing a runtime contract across dialects (Babqua / Janqua / future) | `dev-notes/multi-dialect-design.md` |
+| Versioning, release process, and what goes in a tag | `dev-notes/versioning-releases.md` |
+| Review angles to inhabit when reading the code | `dev-notes/review-personas/` |
+| End-to-end flow of a single render | [How It Works](how-it-works.qmd) |
+
+## Memory and dev-notes
+
+Per-project Claude Code memory lives at
+`~/.claude/projects/-workspace-Dropbox-projects-daslu-babqua/memory/`.
+The CLAUDE.md at the repo root is the entry point for any AI assistant
+working on the codebase — it points at the design doc, the persona
+files, and the memory directory.
+
+## Releases
+
+The `/release` skill walks through the steps; the underlying
+checklist lives in `dev-notes/versioning-releases.md`. Each release
+is gated on running the persona reviews in
+`dev-notes/review-personas/` — a fresh pass derisks the install path
+before the tag goes public.
