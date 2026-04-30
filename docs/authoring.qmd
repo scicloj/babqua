@@ -1,0 +1,165 @@
+---
+filters:
+  - bb
+---
+
+# Authoring Babqua documents
+
+The previous chapter ([Kindly kinds](kindly-kinds.qmd)) covered how to
+control the rendering of a *value*. This chapter covers the knobs
+*around* `.bb` blocks — display attributes (`echo`, `eval`), Babqua's
+`output=` override, per-block options (output suppression, sizing) —
+and finishes with the document-level Quarto features (math, callouts)
+that pair with live evaluation.
+
+## Code block attributes
+
+The Quarto-standard `echo` and `eval` attributes go on the
+**code-block fence** (the opening line of a code block, e.g.
+`` ```{.clojure .bb echo=false} ``):
+
+| Attribute | Effect |
+|:----------|:-------|
+| `echo=false` | Hide the source code, show only the result |
+| `eval=false` | Show code without evaluating it |
+
+```{.clojure .bb echo=false}
+^:kind/hiccup
+[:div "Only the rendered HTML appears — no source code shown"]
+```
+
+Babqua also recognizes an `output=` attribute that picks a renderer
+when the value isn't tagged with Kindly metadata:
+
+| Attribute | Effect |
+|:----------|:-------|
+| `output=html` | Render the value as raw HTML |
+| `output=markdown` | Parse the value as markdown |
+| `output=hidden` | Suppress both source and result |
+
+When both `:kindly/kind` metadata on the value and `output=` on the
+fence are set, the Kindly metadata wins.
+
+See the
+[Quarto documentation on code cells](https://quarto.org/docs/reference/cells/)
+for more on the standard attributes.
+
+## Quarto cell directives
+
+Quarto's `#| key: value` syntax also works at the top of a `.bb`
+block. Babqua parses the directives, applies them as if they'd been
+written on the fence, and strips them from the source before
+evaluation:
+
+```{.clojure .bb}
+#| output: hidden
+(def magic-number 42)
+```
+
+## Per-block options
+
+These are Babqua-specific knobs.
+
+| Option | Type | Default | Where to set it |
+|:---|:---|:---|:---|
+| `hide-stdout` | boolean | `false` | fence, frontmatter, `#|` directive |
+| `width` | integer (px) | per chart kind | fence, `:kindly/options` |
+| `height` | integer (px) | per chart kind | fence, `:kindly/options` |
+
+ECharts and Cytoscape default to 600 × 400 pixels because their
+libraries refuse to render to a size-less container. Other chart
+kinds (Plotly, Vega-Lite, Highcharts) auto-fit and have no built-in
+pixel default.
+
+`hide-stdout` is an evaluation/runtime concern; `width` and `height`
+are layout concerns and Babqua also reads them from the value's
+`:kindly/options` metadata.
+
+For each option, the highest-priority source that sets it wins,
+falling back through the others to the built-in default.
+
+### Fence attribute
+
+Set on the opening line of a code block:
+
+````
+```{.clojure .bb hide-stdout=true}
+(do (println "noisy debug")
+    42)
+```
+````
+
+````
+```{.clojure .bb width=400 height=250}
+^:kind/plotly
+{:data [{:x [1 2 3 4 5] :y [4 1 5 3 2] :type "bar"}]
+ :layout {:title "Sized 400×250"}}
+```
+````
+
+### Frontmatter (`hide-stdout` only)
+
+Doc-wide default for `hide-stdout` goes in the YAML header:
+
+```yaml
+---
+filters:
+  - bb
+babqua:
+  hide-stdout: true
+---
+```
+
+`width` and `height` aren't read from frontmatter — set them per
+block via the fence or via `:kindly/options`.
+
+### `:kindly/options` (`width` and `height` only)
+
+Annotate the value's metadata under `:kindly/options`:
+
+```{.clojure .bb}
+^{:kindly/kind :kind/plotly
+  :kindly/options {:width 800 :height 500}}
+{:data [{:x [1 2 3] :y [10 20 15] :type "bar"}]
+ :layout {:title "Sized via :kindly/options"}}
+```
+
+Library functions can attach these via `with-meta` / `vary-meta`, so
+callers don't need to set them at the call site.
+
+## Combining with other filters
+
+If you list more than one filter in `filters:`, put `bb` first —
+Babqua needs the `.bb` class to still be on the block when it runs:
+
+```yaml
+filters:
+  - bb
+  - some-other-filter
+```
+
+## Document-level Quarto features
+
+Quarto's authoring features apply to a `.qmd` file the same way they
+would in any Quarto document — Babqua only intervenes for `.bb` code
+blocks. A few worth knowing:
+
+**Math.** Quarto recognizes LaTeX math in prose: write
+`$\sqrt{x^2 + y^2}$` for inline math like $\sqrt{x^2 + y^2}$, or
+`$$ ... $$` for a display equation:
+
+$$\int_0^\infty e^{-x^2}\,dx = \frac{\sqrt{\pi}}{2}$$
+
+The same Quarto pipeline handles math returned from `^:kind/md` —
+Babqua emits the markdown string into Pandoc's AST and Quarto then
+processes the math:
+
+```{.clojure .bb}
+^:kind/md
+["The area of a circle is $A = \\pi r^2$."]
+```
+
+**Callouts**, **frontmatter** (title, theme, format options),
+**cross-references**, and **citations** are all standard Quarto. See
+the [Quarto authoring guide](https://quarto.org/docs/authoring/) for
+the full set.

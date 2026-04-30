@@ -1,0 +1,144 @@
+---
+filters:
+  - bb
+---
+
+# Overview {.unnumbered}
+
+**Babqua** is a [Quarto](https://quarto.org) extension for writing
+[Babashka](https://babashka.org) code in visual documents. Each
+`{.clojure .bb}` block in a `.qmd` file is evaluated by Babashka during
+rendering, producing code output, charts, diagrams, tables, or computed
+HTML.
+
+Charts render via [Plotly](https://plotly.com/javascript/),
+[Vega-Lite](https://vega.github.io/vega-lite/),
+[ECharts](https://echarts.apache.org/),
+[Cytoscape](https://js.cytoscape.org/), or
+[Highcharts](https://www.highcharts.com/); diagrams via
+[Mermaid](https://mermaid.js.org/) and
+[Graphviz](https://graphviz.org/); tables as HTML. Rendering follows
+the [Kindly](https://scicloj.github.io/kindly-noted/) convention, the
+same way [Clay](https://scicloj.github.io/clay/) handles Clojure docs —
+so the patterns are familiar if you're coming from Clay, and
+ready-to-publish if you've never written a notebook before.
+
+Babqua is the sibling of [Janqua](https://github.com/scicloj/janqua),
+which targets [Jank](https://jank-lang.org). Same Quarto-filter
+pattern, same Kindly vocabulary, different host language.
+
+::: {.callout-note}
+Babqua is at an **experimental stage**. Things may change, and some
+rough edges are expected. Feedback, bug reports, and ideas are very
+welcome — please open an issue on
+[GitHub](https://github.com/scicloj/babqua/issues) or reach out on the
+[Clojurians Zulip chat](https://scicloj.github.io/docs/community/chat/).
+:::
+
+## What is Quarto?
+
+[Quarto](https://quarto.org) is an open-source publishing system for
+technical documents — widely used in scientific communities for blog
+posts, books, academic papers, and reproducible research. You write
+`.qmd` (Quarto Markdown) files mixing prose and code, and Quarto
+renders them to HTML, PDF, slides, and other formats.
+
+Quarto has been used in multiple Clojure projects, most often through
+[Clay](https://scicloj.github.io/clay/) — a Clojure tool that
+generates Quarto markdown from Clojure namespaces.
+
+Quarto supports several project types:
+
+- **Single documents** — a standalone `.qmd` file
+- **[Websites](https://quarto.org/docs/websites/)** — multiple pages
+  with navigation, like a documentation site
+- **[Books](https://quarto.org/docs/books/)** — chapters rendered as
+  a navigable book (like this one)
+
+## What is Babashka?
+
+[Babashka](https://babashka.org) is a Clojure runtime built for
+scripting. It starts in tens of milliseconds, ships with a curated
+set of libraries (HTTP, JSON, hiccup, EDN, processes, …), and supports
+[pods](https://github.com/babashka/babashka/blob/master/doc/projects.md#pods)
+for dropping in things like SQLite, AWS, HTML parsing, and more — all
+without a JVM. That makes it a particularly good fit for notebooks:
+the cost of "spin up a new bb process per render" is rounding error
+against the actual rendering work.
+
+## Use Babqua for…
+
+- **Tutorials and documentation** — about Babashka itself or
+  libraries built on it, with live-evaluated examples woven into the
+  narrative
+- **Research reports and data analysis** — figures, tables, math, and
+  prose in a single reproducible document
+- **Interactive exploration** — iterate quickly with `quarto render`
+  on save, or reach for `quarto preview` once nREPL preview mode
+  lands
+- **Sharing on [Clojure Civitas](https://clojurecivitas.org/)** —
+  Babashka posts on the Clojure community's collaborative space
+
+## Clojure ecosystem connection
+
+[Clay](https://scicloj.github.io/clay/) generates Quarto markdown
+from Clojure namespaces, then uses Quarto as a rendering engine to
+produce HTML pages, books, and slideshows — the established path for
+JVM Clojure documents in the Quarto world.
+
+Babqua takes a different approach: rather than generating Quarto
+markdown from a namespace, the Quarto filter evaluates `{.clojure .bb}`
+blocks embedded directly in `.qmd` files. It follows the
+[Kindly](https://scicloj.github.io/kindly-noted/) convention for
+rendering annotations, so familiar Kindly metadata patterns apply
+when authoring Babashka documents.
+
+The two approaches are complementary, both following the Kindly
+convention.
+
+## How it works
+
+1. You write a `.qmd` file with `{.clojure .bb}` code blocks
+2. When Quarto renders the document, the Babqua filter intercepts
+   these blocks
+3. A single Babashka process evaluates all of them in order, in the
+   document's directory (so your `bb.edn` deps and pods are
+   available)
+4. Results are rendered into the document — as code output, HTML,
+   charts, diagrams, or markdown — based on
+   [Kindly kinds](kindly-kinds.qmd)
+
+```{.clojure .bb}
+^:kind/hiccup
+[:div {:style "color: coral; font-size: 24px;"}
+  "Hello from Babashka!"]
+```
+
+See [Getting Started](getting-started.qmd) to try it out, or jump to
+the [Demo](demo.qmd) to see evaluated examples.
+
+## Roadmap
+
+- **More Kindly kinds** — `:kind/dataset`, `:kind/image` are the next
+  candidates after the v1 set (the [Kindly kinds](kindly-kinds.qmd)
+  page lists what's already in)
+- **nREPL preview mode** — persistent Babashka session for fast
+  re-rendering during `quarto preview`
+- **Pod-driven demos** — SQLite, AWS, HTML parsing in a notebook
+  without a JVM
+- **Clay support for Babashka** — namespace-as-notebook experience,
+  where `.clj` source files render as documents without writing
+  `.qmd` by hand
+
+## Chapters
+
+- [Getting Started](getting-started.qmd) — prerequisites, installation,
+  first document, rendering
+- [Workflow](workflow.qmd) — render and preview modes, publishing
+- [Kindly kinds](kindly-kinds.qmd) — controlling how a value renders
+  (HTML, charts, diagrams, math, …)
+- [Authoring Babqua documents](authoring.qmd) — code-block attributes,
+  per-block options, document-level Quarto features
+- [How It Works](how-it-works.qmd) — architecture, two-pass filter,
+  bb invocation, runtime
+- [Demo](demo.qmd) — evaluated examples of all output kinds

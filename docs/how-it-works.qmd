@@ -1,0 +1,149 @@
+# How It Works
+
+This chapter explains the internals of Babqua — how your
+`{.clojure .bb}` code blocks turn into rendered output.
+
+## Architecture overview
+
+Babqua is a [Pandoc Lua filter](https://pandoc.org/lua-filters.html).
+When Quarto renders a `.qmd` file, it calls
+[Pandoc](https://pandoc.org/) under the hood. Pandoc reads the
+document, builds an abstract syntax tree (AST), and runs any filters
+specified in the frontmatter. The Babqua filter intercepts code
+blocks marked with the `.bb` class, evaluates them through a single
+Babashka process, and replaces them with the appropriate output.
+
+```{mermaid}
+flowchart LR
+  qmd[.qmd file] --> quarto[Quarto]
+  quarto --> pandoc[Pandoc]
+  pandoc -- AST --> lua[babqua.lua filter]
+  lua -- script --> bb[bb runtime.bb]
+  bb -- JSON --> lua
+  lua -- AST --> pandoc
+  pandoc --> out[HTML]
+```
+
+Where Janqua bootstraps helper functions over the wire and parses
+Clojure-printed output, Babqua leans on Babashka's batteries —
+hiccup, cheshire, EDN are all built in. The Lua filter stays thin:
+the bb-side runtime detects the Kindly kind and pre-renders the
+value into HTML / JSON / markdown, and the filter just inserts the
+result.
+
+## Three filter passes
+
+Pandoc visits Meta after Block elements within a single filter pass,
+which is awkward for a workflow that needs to evaluate all blocks
+together before rendering any of them. Babqua splits the work into
+three passes:
+
+1. **Collect** — every `.bb` block's source is recorded into a
+   module-level list.
+2. **Evaluate** — a `Pandoc` function (which runs at the end of a
+   pass) builds a single bb script that calls
+   `babqua.runtime/run-blocks` on the collected sources, invokes
+   `bb`, and stores the JSON response.
+3. **Replace** — a fresh `CodeBlock` traversal indexes back into the
+   stored results, dispatches by `:format`, and substitutes the
+   rendered AST. The same pass injects `babqua.css` into
+   `header-includes`.
+
+## bb-side runtime
+
+`runtime.bb` lives next to the Lua filter and gets `load-file`'d into
+the bb process at the start of every render. It defines:
+
+- `babqua.runtime/eval-block` — wraps a single user-provided source
+  string in `(do ...)`, reads it with `read-string`, evaluates it
+  while capturing stdout into a `StringWriter`, inspects the
+  metadata of the result, and dispatches by Kindly kind to a
+  pre-rendering function.
+- `babqua.runtime/run-blocks` — switches `*ns*` to `user` (so defs
+  persist in a clean namespace), then maps `eval-block` across the
+  collected sources and returns a vector of result maps.
+
+The pre-rendering helpers are dialect-native: `hiccup2.core/html` for
+hiccup, `cheshire.core/generate-string` for chart JSON, an inline
+hiccup-based table renderer for `:kind/table`, plain string
+passthrough for `kind/html` / `kind/md` / `kind/mermaid` /
+`kind/graphviz` / `kind/tex` / `kind/code`. Each result carries:
+
+- `:kind` — the original Kindly kind keyword (string-encoded), or nil
+- `:format` — a directive the Lua filter dispatches on:
+  `raw-html`, `chart`, `markdown`, `tex`, `mermaid`, `graphviz`,
+  `code-display`, `code-default`, `hidden`
+- `:rendered` — the pre-formed payload (an HTML string, a JSON
+  string, a source string, or `pr-str` of the value)
+- `:lib` — for `chart`, the CDN library name (`vega-lite`, `plotly`,
+  `echarts`, `cytoscape`, `highcharts`)
+- `:options` — width / height passed via the value's
+  `:kindly/options` metadata, integer-validated
+- `:stdout` — captured stdout, if any
+- `:error` / `:stack` — present instead of `:format` if eval threw
+
+The whole vector of results is serialized as JSON and printed on bb's
+stdout. The Lua filter scans for the JSON line, decodes it via
+`pandoc.json.decode`, and dispatches.
+
+## Filter-side dispatch
+
+Most formats are direct insertions: `raw-html` becomes
+`pandoc.RawBlock("html", rendered)`, `markdown` is round-tripped
+through `pandoc.read(...,  "markdown")`, `code-display` becomes a
+`CodeBlock` with the `clojure` class.
+
+`chart`, `mermaid`, and `graphviz` are wrapped client-side: the Lua
+filter emits a `<div>` with a unique id, the SRI-pinned `<script>`
+tag for the relevant CDN library (deduplicated per document), and a
+small `<script>` block that hands the pre-rendered payload to the
+library. CDN URLs are pinned with
+[Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity)
+hashes so the browser refuses to execute a script if its bytes don't
+match — protecting viewers against a CDN compromise or malicious
+patch pushed under a loose version tag.
+
+## Quarto cell directives
+
+Quarto's `#| key: value` syntax — the convention used by Jupyter and
+knitr engines — is also supported. Babqua's collect pass parses
+leading `#|` lines into the block's attributes (so
+`#| output: hidden` is equivalent to the fence attribute
+`output=hidden`) and strips them from the source bb sees.
+
+## Error handling
+
+When user code throws, the bb-side runtime catches it and returns an
+error map (`:error` + `:stack`) instead of a render payload. The Lua
+filter renders this as a visible `cell-output cell-output-error`
+block, mirroring how Quarto shows native cell errors. If the block's
+fence has `echo=false`, the source is tucked into a collapsed
+`<details>` summary inside the error block so the failing source is
+still one click away.
+
+When the filter itself can't proceed — `bb` not on PATH,
+`pandoc.json` unavailable, the JSON response unparseable — the
+problem is announced via a framed stderr block (so build logs flag
+it loudly) and each affected block in the rendered document gets a
+`cell-output-error` div pointing at the same root cause.
+
+## What stays in Lua, what moves to bb
+
+| Concern | Lua filter | bb runtime |
+|---|---|---|
+| AST manipulation | yes | — |
+| Project root resolution | yes | — |
+| bb script generation | yes | — |
+| JSON decoding (response) | yes | — |
+| CDN scripts and SRI | yes | — |
+| Chart wrapper / div ids | yes | — |
+| Hiccup → HTML | — | yes |
+| Value → JSON (chart spec) | — | yes |
+| Kind detection | — | yes |
+| Kind-to-format dispatch | — | yes |
+| Stdout capture | — | yes |
+
+This division means Lua is the wrong place for data-shape decisions
+when the host language has a great library for them — and Babashka
+does. Adding a new kind that doesn't need new CDN scripts is a
+runtime-only change.

@@ -1,0 +1,21 @@
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: "Babqua"
+  subtitle: "Babashka code in Quarto documents"
+  repo-url: https://github.com/scicloj/babqua
+  repo-actions: [issue]
+  chapters:
+    - index.qmd
+    - getting-started.qmd
+    - workflow.qmd
+    - kindly-kinds.qmd
+    - authoring.qmd
+    - how-it-works.qmd
+    - demo.qmd
+
+format:
+  html:
+    theme: cosmo

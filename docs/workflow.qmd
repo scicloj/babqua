@@ -1,0 +1,83 @@
+# Workflow
+
+Day-to-day Babqua use comes down to two things: rendering documents
+and publishing the result.
+
+## Rendering
+
+```bash
+quarto render hello.qmd
+```
+
+This launches a single Babashka process for the duration of the
+render, evaluates every `{.clojure .bb}` block in order, and produces
+`hello.html`. State carries across blocks — `def`s and `require`s in
+block 1 are visible in block 2, just like a REPL session.
+
+The bb process runs in your project root (the directory containing
+`_quarto.yml`, or the document's directory if there's no project
+config), so a sibling `bb.edn` is auto-loaded for deps and pods. You
+don't need to do anything special — drop the deps you'd use in any
+bb script and they're available inside notebook cells.
+
+There's no PID file, no log file, no lifecycle to manage. Each render
+spawns a fresh process. Babashka's startup is fast enough (tens of
+milliseconds) that the cost is negligible compared to rendering work.
+
+## Preview mode
+
+`quarto preview` re-renders on every save. Out of the box, each save
+spawns a fresh bb process — correct and surprisingly fast, since bb
+starts in tens of milliseconds. For documents that load heavy pods or
+do expensive setup, you can opt into a persistent bb session that
+keeps state warm across saves:
+
+```bash
+# Start once per session (typically before `quarto preview`)
+bb _extensions/bb/babqua-lifecycle.bb start
+
+# Now run preview as normal — the filter detects the live REPL and
+# routes evaluations through it.
+quarto preview hello.qmd
+
+# When you're done, tear it down.
+bb _extensions/bb/babqua-lifecycle.bb stop
+```
+
+While the persistent session is running, `def`s and `require`s carry
+across renders the way they would in any Clojure REPL — removing
+`(def x 42)` from a block doesn't unbind `x` until you reset. That's
+the standard Clojure-ecosystem feel; if you'd rather have a fresh
+process per save, add this to your document's frontmatter:
+
+```yaml
+babqua:
+  reset-on-render: true
+```
+
+Babqua then stops the running session before the render begins, this
+render runs as one-shot, and the persistent session stays down until
+you `start` it again.
+
+State files (`.babqua-pid`, `.babqua-nrepl-port`, `.babqua-bb.log`)
+live in your project root while the session is active. Add them to
+your `.gitignore` if they aren't already covered.
+
+## Publishing to GitHub Pages
+
+If your project is a Quarto book or website, you can publish it to
+[GitHub Pages](https://pages.github.com/) directly from your project
+directory:
+
+```bash
+quarto publish gh-pages
+```
+
+This renders the project and pushes the output to the `gh-pages`
+branch. GitHub Pages then serves it as a website. On first use,
+Quarto will create the branch and configure it for you.
+
+See the
+[Quarto publishing guide](https://quarto.org/docs/publishing/github-pages.html)
+for more options, including custom domains and GitHub Actions
+automation.
