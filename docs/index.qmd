@@ -122,8 +122,6 @@ the [Demo](demo.qmd) to see evaluated examples.
 - **More Kindly kinds** — `:kind/dataset`, `:kind/image` are the next
   candidates after the v1 set (the [Kindly kinds](kindly-kinds.qmd)
   page lists what's already in)
-- **nREPL preview mode** — persistent Babashka session for fast
-  re-rendering during `quarto preview`
 - **Pod-driven demos** — SQLite, AWS, HTML parsing in a notebook
   without a JVM
 - **Clay support for Babashka** — namespace-as-notebook experience,
