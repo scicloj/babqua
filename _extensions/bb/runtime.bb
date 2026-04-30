@@ -8,7 +8,8 @@
   filter stays thin: dispatch by `:format`, manage CDN scripts, insert
   the pre-formed payload."
   (:require [hiccup2.core :as hiccup]
-            [cheshire.core :as json]))
+            [cheshire.core :as json]
+            [clojure.string :as str]))
 
 (declare render-by-kind)
 
@@ -38,6 +39,15 @@
   (if (and (string-kinds kind) (vector? v))
     (first v)
     v))
+
+(defn- script-safe-json
+  "Like `json/generate-string`, but escapes every `<` to `\\u003c` so the
+  payload can be spliced into an inline `<script>` body without risk of
+  user data containing `</script>` (or `<!--` / `<script>`) breaking out
+  of the surrounding script element. The escape is invisible to a JSON
+  parser — same value, just longer source."
+  [v]
+  (str/replace (json/generate-string v) "<" "\\u003c"))
 
 (defn- render-table-html
   "Render tabular data as a plain HTML table.
@@ -101,19 +111,19 @@
      :rendered (str v)}
 
     :kind/vega-lite
-    {:format "chart" :lib "vega-lite" :rendered (json/generate-string v)}
+    {:format "chart" :lib "vega-lite" :rendered (script-safe-json v)}
 
     :kind/plotly
-    {:format "chart" :lib "plotly" :rendered (json/generate-string v)}
+    {:format "chart" :lib "plotly" :rendered (script-safe-json v)}
 
     :kind/echarts
-    {:format "chart" :lib "echarts" :rendered (json/generate-string v)}
+    {:format "chart" :lib "echarts" :rendered (script-safe-json v)}
 
     :kind/cytoscape
-    {:format "chart" :lib "cytoscape" :rendered (json/generate-string v)}
+    {:format "chart" :lib "cytoscape" :rendered (script-safe-json v)}
 
     :kind/highcharts
-    {:format "chart" :lib "highcharts" :rendered (json/generate-string v)}
+    {:format "chart" :lib "highcharts" :rendered (script-safe-json v)}
 
     :kind/table
     (if-let [html (render-table-html v)]
@@ -123,7 +133,13 @@
                    "or a sequence of maps. Got: " (pr-str v))})
 
     nil
-    {:format "code-default" :rendered (pr-str v)}
+    (if (var? v)
+      ;; `(def x 42)` returns the var (#'user/x); rendering that adds
+      ;; noise without information. Knitr and similar tools suppress
+      ;; assignment results by default; do the same for top-level defs.
+      ;; Override by attaching a kind, e.g. `^:kind/code (str (def x 42))`.
+      {:format "hidden"}
+      {:format "code-default" :rendered (pr-str v)})
 
     {:error (str "Unsupported kind: " (str kind)
                  ". Value: " (pr-str v))}))

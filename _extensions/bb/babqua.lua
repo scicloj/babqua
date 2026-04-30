@@ -78,12 +78,16 @@ end
 
 -- Encode a Lua string as a JSON/JS string literal (with quotes).
 -- Used when splicing user-controlled content into inline <script> blocks.
+-- `<` is escaped to `\u003c` because the HTML5 parser scans `<script>`
+-- bodies for `</script>` regardless of JS string quoting, so a user
+-- string containing `</script>` would otherwise terminate the element.
 local function js_string_encode(s)
   s = s:gsub('\\', '\\\\')
   s = s:gsub('"', '\\"')
   s = s:gsub('\n', '\\n')
   s = s:gsub('\r', '\\r')
   s = s:gsub('\t', '\\t')
+  s = s:gsub('<', '\\u003c')
   return '"' .. s .. '"'
 end
 
