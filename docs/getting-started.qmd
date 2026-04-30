@@ -12,8 +12,6 @@ you find.
 2. **[Babashka](https://github.com/babashka/babashka#installation)** —
    the Clojure scripting runtime
 
-That's the whole list. No JVM, no `bbin`, no nREPL client to install.
-
 Verify both are available:
 
 ```bash
@@ -30,9 +28,12 @@ cd my-bb-doc
 
 If you want to bring in extra libraries or
 [pods](https://github.com/babashka/babashka/blob/master/doc/projects.md#pods)
-later, drop a `bb.edn` here — Babashka auto-loads it from the
-directory it runs in, so notebook code blocks see the same deps and
-pods you'd see from a regular bb script.
+later, drop a `bb.edn` here. Babashka auto-loads it from the
+directory the filter runs in — for a standalone document like this
+one, that's the document's directory; for a Quarto
+[book](https://quarto.org/docs/books/) or
+[website](https://quarto.org/docs/websites/), it's the project root
+(the directory with `_quarto.yml`).
 
 ## Install the extension
 
@@ -45,14 +46,15 @@ quarto add scicloj/babqua
 
 Quarto will ask you to confirm — type `y` and press Enter.
 
-Sanity check that the filter files landed:
+Sense check that the filter files landed:
 
 ```bash
 ls _extensions/scicloj/bb/
 ```
 
-You should see `babqua.lua`, `runtime.bb`, `babqua.css`, and
-`_extension.yml`.
+You should see `_extension.yml`, `babqua.lua`, `babqua.css`,
+`runtime.bb`, and the two scripts used by preview mode —
+`babqua-lifecycle.bb` and `babqua-nrepl-client.bb`.
 
 ## Write a document
 
@@ -92,9 +94,7 @@ quarto render hello.qmd
 ```
 
 This launches a single Babashka process, evaluates the code blocks in
-order, and produces `hello.html`. Babashka's startup cost is small
-enough (tens of milliseconds) that there's no persistent process to
-manage — each render is fresh.
+order, and produces `hello.html`.
 
 ## Trust model
 

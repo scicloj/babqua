@@ -28,15 +28,20 @@
 --   ^:kind/highcharts {...}    — Highcharts chart (CDN)
 --   ^:kind/table ...           — HTML table (rendered on bb side)
 --
--- The filter runs in two passes:
---   1. Collect every `.bb` block's source.
---   2. Spawn a single `bb` process that evaluates them all in order,
---      then walk the AST again replacing each block with its rendered
---      result.
--- Janqua's nREPL/clj-nrepl-eval lifecycle is intentionally absent here:
--- Babashka starts in 30–40ms, so for the publishing path a fresh process
--- per render is cheaper than managing a persistent one. Preview mode
--- (Phase 6) will reintroduce nREPL.
+-- The filter runs in three passes:
+--   1. Collect — record every `.bb` block's source (AST untouched).
+--   2. Pandoc — invoke bb once on the collected sources, store the
+--      JSON response of per-block results.
+--   3. Replace — walk the AST again, swap each block for its
+--      rendered output, inject babqua.css into header-includes.
+-- Two evaluation modes (chosen per-render in run_evaluations):
+--   - One-shot — `bb <script>`, fresh process per render. Default
+--     for `quarto render` and any session without a persistent REPL.
+--   - Persistent — when babqua-lifecycle.bb has spawned a long-lived
+--     bb nREPL (detected via .babqua-pid + .babqua-nrepl-port), the
+--     filter forwards the same eval script through
+--     babqua-nrepl-client.bb. Defs accumulate across renders.
+-- See the "persistent (nREPL preview) mode" section below.
 
 -- Module-level state. Reset every render.
 local project_root = nil

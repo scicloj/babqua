@@ -86,6 +86,38 @@ The whole vector of results is serialized as JSON and printed on bb's
 stdout. The Lua filter scans for the JSON line, decodes it via
 `pandoc.json.decode`, and dispatches.
 
+## Two invocation paths
+
+The runtime contract above is identical in both modes; only the
+delivery differs.
+
+### One-shot
+
+The default for `quarto render`. The filter writes the script to a
+temp file inside a per-render mode-0700 directory and runs
+`bb <script>` directly. A fresh bb starts, `load-file`s the runtime,
+evaluates the blocks, prints the JSON response, and exits.
+
+### Persistent
+
+When `babqua-lifecycle.bb start` has spawned a long-lived
+`bb nrepl-server` (an [nREPL](https://nrepl.org/) server, the
+standard Clojure remote-REPL protocol) and written `.babqua-pid` and
+`.babqua-nrepl-port` to the project root, the filter detects them
+and pipes the same script through `babqua-nrepl-client.bb <port>`
+instead.
+
+The client sends one `eval` op over
+[bencode](https://en.wikipedia.org/wiki/Bencode) (nREPL's wire
+format), relays the response's `:out` chunks to its stdout, and
+exits. The runtime's `(println …)` becomes nREPL `:out`; downstream
+JSON-extraction is unchanged.
+
+State accumulates across renders because the bb process keeps its
+`user` namespace warm. `babqua: { reset-on-render: true }` in
+frontmatter opts out per document — the filter stops the running
+session before that render and falls back to one-shot.
+
 ## Filter-side dispatch
 
 Most formats are direct insertions: `raw-html` becomes
@@ -94,14 +126,16 @@ through `pandoc.read(...,  "markdown")`, `code-display` becomes a
 `CodeBlock` with the `clojure` class.
 
 `chart`, `mermaid`, and `graphviz` are wrapped client-side: the Lua
-filter emits a `<div>` with a unique id, the SRI-pinned `<script>`
-tag for the relevant CDN library (deduplicated per document), and a
-small `<script>` block that hands the pre-rendered payload to the
-library. CDN URLs are pinned with
-[Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity)
-hashes so the browser refuses to execute a script if its bytes don't
-match — protecting viewers against a CDN compromise or malicious
-patch pushed under a loose version tag.
+filter emits a `<div>` with a unique id, the
+[Subresource Integrity (SRI)](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity)-pinned
+`<script>` tag for the relevant CDN library (deduplicated per
+document), and a small `<script>` block that hands the pre-rendered
+payload to the library.
+
+SRI works by attaching a content hash to each `<script>` tag — the
+browser refuses to execute the script if its bytes don't match the
+pinned hash, protecting viewers against a CDN compromise or a
+malicious patch pushed under a loose version tag.
 
 ## Quarto cell directives
 

@@ -41,9 +41,11 @@ When both `:kindly/kind` metadata on the value and `output=` on the
 fence are set, `output=` wins. The fence attribute is the more
 explicit, local signal — treating it as an override matches Quarto's
 own pattern of per-block attributes taking precedence over
-document-level defaults. This is also the escape hatch for inspecting
-a value that's tagged for chart rendering: `output=html` shows the
-JSON spec; `output=hidden` suppresses the cell entirely.
+document-level defaults.
+
+This is also the escape hatch for inspecting a value that's tagged
+for chart rendering: `output=html` shows the JSON spec;
+`output=hidden` suppresses the cell entirely.
 
 See the
 [Quarto documentation on code cells](https://quarto.org/docs/reference/cells/)
@@ -149,9 +151,11 @@ Quarto's authoring features apply to a `.qmd` file the same way they
 would in any Quarto document — Babqua only intervenes for `.bb` code
 blocks. A few worth knowing:
 
-**Math.** Quarto recognizes LaTeX math in prose: write
-`$\sqrt{x^2 + y^2}$` for inline math like $\sqrt{x^2 + y^2}$, or
-`$$ ... $$` for a display equation:
+### Math
+
+Quarto recognizes LaTeX math in prose: write `$\sqrt{x^2 + y^2}$`
+for inline math like $\sqrt{x^2 + y^2}$, or `$$ ... $$` for a
+display equation:
 
 $$\int_0^\infty e^{-x^2}\,dx = \frac{\sqrt{\pi}}{2}$$
 
@@ -164,7 +168,9 @@ processes the math:
 ["The area of a circle is $A = \\pi r^2$."]
 ```
 
-**Callouts**, **frontmatter** (title, theme, format options),
-**cross-references**, and **citations** are all standard Quarto. See
-the [Quarto authoring guide](https://quarto.org/docs/authoring/) for
-the full set.
+### Other Quarto features
+
+Callouts, frontmatter (title, theme, format options),
+cross-references, and citations are all standard Quarto. See the
+[Quarto authoring guide](https://quarto.org/docs/authoring/) for the
+full set.

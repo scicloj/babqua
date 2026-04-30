@@ -79,8 +79,7 @@ ever leaving the notebook.
 ```
 
 The whole pipeline — HTTP, JSON, transform, chart spec, render —
-happens inside `quarto render`, with no JVM, no extra deps, and no
-nREPL session to start.
+happens inside `quarto render`.
 
 ## Hiccup
 
@@ -141,7 +140,7 @@ Use `^:kind/plotly` with a map containing `:data` and `:layout` keys:
  :layout {:title "Sized 400×250 via fence attrs"}}
 ```
 
-See [Per-block options](authoring.html#per-block-options) for the full
+See [Per-block options](authoring.qmd#per-block-options) for the full
 set and precedence rules.
 
 ## HTML table

@@ -16,7 +16,7 @@
 ;; Mirrors Janqua's lifecycle script (jank-lifecycle.sh) in shape, but
 ;; written in bb because Babqua already requires bb at runtime. Defenses
 ;; carried over from Janqua: atomic file writes, PID validation before
-;; kill, cleanup-on-death monitor, project-root sanity check.
+;; kill, cleanup-on-death monitor, project-root sense check.
 
 (ns babqua.lifecycle
   (:require [babashka.fs :as fs]

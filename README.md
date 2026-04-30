@@ -8,13 +8,13 @@ HTML.
 
 Babqua is a sibling of [Janqua](https://github.com/scicloj/janqua), the
 same idea applied to [Jank](https://jank-lang.org). Where Janqua targets
-Jank's emerging ecosystem, Babqua leans on Babashka's batteries — fast
-startup, built-in JSON / Hiccup / EDN, and the [pods](https://github.com/babashka/babashka/blob/master/doc/projects.md#pods)
+Jank's emerging ecosystem, Babqua leans on Babashka's batteries —
+built-in JSON / Hiccup / EDN, and the [pods](https://github.com/babashka/babashka/blob/master/doc/projects.md#pods)
 ecosystem (SQLite, AWS, HTML parsing, …) — to make notebooks
 self-contained and reproducible.
 
 Charts render via Plotly, Vega-Lite, ECharts, Cytoscape, or Highcharts;
-diagrams via Mermaid and Graphviz; tables via Pandoc. Rendering follows
+diagrams via Mermaid and Graphviz; tables as HTML. Rendering follows
 the [Kindly](https://scicloj.github.io/kindly-noted/) convention, the
 same way [Clay](https://scicloj.github.io/clay/) handles Clojure docs.
 
@@ -26,8 +26,6 @@ same way [Clay](https://scicloj.github.io/clay/) handles Clojure docs.
 
 - [Quarto](https://quarto.org/docs/get-started/)
 - [Babashka](https://github.com/babashka/babashka#installation)
-
-That's it. No JVM, no `bbin`, no nREPL client to install.
 
 ## Quick start
 

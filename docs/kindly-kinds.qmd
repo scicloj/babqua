@@ -82,7 +82,9 @@ shown. Useful for setup like defining helper functions:
 ## `^:kind/mermaid` — Mermaid diagrams
 
 Renders a string as a [Mermaid](https://mermaid.js.org/) diagram. The
-Mermaid JS library is loaded automatically from CDN:
+Mermaid JS library is loaded automatically from a
+[CDN](https://en.wikipedia.org/wiki/Content_delivery_network)
+(content delivery network):
 
 ```{.clojure .bb}
 ^:kind/mermaid
@@ -142,6 +144,67 @@ The spec should have `:data` and `:layout` keys:
 ^:kind/plotly
 {:data [{:x [1 2 3 4] :y [10 15 13 17] :type "scatter" :mode "lines+markers"}]
  :layout {:title "Simple Plotly Chart"}}
+```
+
+## `^:kind/echarts` — ECharts charts
+
+Renders a map as an [ECharts](https://echarts.apache.org/) chart. The
+JS library is loaded automatically from CDN. The map is passed
+through to `echarts.setOption`:
+
+```{.clojure .bb}
+^:kind/echarts
+{:xAxis {:type "category" :data ["Mon" "Tue" "Wed" "Thu" "Fri"]}
+ :yAxis {:type "value"}
+ :series [{:type "bar" :data [12 19 8 15 22]}]}
+```
+
+ECharts refuses to render to a size-less container, so Babqua applies
+a default of 600 × 400 pixels. Override with `width=`/`height=` fence
+attributes or `:kindly/options`.
+
+## `^:kind/cytoscape` — Cytoscape graphs
+
+Renders a map as a [Cytoscape](https://js.cytoscape.org/) graph. The
+spec needs `:elements` (nodes and edges); Babqua sets the container
+automatically:
+
+```{.clojure .bb}
+^:kind/cytoscape
+{:elements [{:data {:id "a"}}
+            {:data {:id "b"}}
+            {:data {:id "c"}}
+            {:data {:id "ab" :source "a" :target "b"}}
+            {:data {:id "bc" :source "b" :target "c"}}
+            {:data {:id "ca" :source "c" :target "a"}}]
+ :style [{:selector "node"
+          :style {:label "data(id)"
+                  :background-color "steelblue"
+                  :color "white"
+                  :text-valign "center"
+                  :text-halign "center"}}
+         {:selector "edge"
+          :style {:width 2
+                  :line-color "#aaa"
+                  :curve-style "bezier"}}]
+ :layout {:name "circle"}}
+```
+
+Cytoscape also needs an explicit container size; the default is the
+same 600 × 400 pixels.
+
+## `^:kind/highcharts` — Highcharts charts
+
+Renders a map as a [Highcharts](https://www.highcharts.com/) chart.
+The map is passed straight to `Highcharts.chart`:
+
+```{.clojure .bb}
+^:kind/highcharts
+{:chart {:type "column"}
+ :title {:text "Highcharts demo"}
+ :xAxis {:categories ["A" "B" "C" "D"]}
+ :yAxis {:title {:text "Count"}}
+ :series [{:name "Counts" :data [10 20 15 25]}]}
 ```
 
 ## `^:kind/table` — HTML tables
@@ -218,8 +281,8 @@ needed at the call site:
 
 This is a key idea behind Kindly: rendering intent lives in the
 metadata of values, not in the document markup. Libraries can provide
-visualization functions that "just work" in any Kindly-aware tool —
-Babqua, Clay, Janqua, or others.
+visualization functions that render correctly in any Kindly-aware
+tool — Babqua, Clay, Janqua, or others.
 
 ## Why wrap strings in vectors?
 
@@ -255,4 +318,4 @@ Babqua automatically unwraps the vector for all string-valued kinds
 | `^:kind/cytoscape` | map | [Cytoscape](https://js.cytoscape.org/) graph |
 | `^:kind/highcharts` | map | [Highcharts](https://www.highcharts.com/) chart |
 | `^:kind/table` | map or seq-of-maps | HTML table |
-| _(none)_ | any | code output |
+| _(none)_ | any | code output (vars from `(def …)` are suppressed) |

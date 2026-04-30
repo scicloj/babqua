@@ -19,9 +19,7 @@ Charts render via [Plotly](https://plotly.com/javascript/),
 [Mermaid](https://mermaid.js.org/) and
 [Graphviz](https://graphviz.org/); tables as HTML. Rendering follows
 the [Kindly](https://scicloj.github.io/kindly-noted/) convention, the
-same way [Clay](https://scicloj.github.io/clay/) handles Clojure docs —
-so the patterns are familiar if you're coming from Clay, and
-ready-to-publish if you've never written a notebook before.
+same way [Clay](https://scicloj.github.io/clay/) handles Clojure docs.
 
 Babqua is the sibling of [Janqua](https://github.com/scicloj/janqua),
 which targets [Jank](https://jank-lang.org). Same Quarto-filter
@@ -58,13 +56,11 @@ Quarto supports several project types:
 ## What is Babashka?
 
 [Babashka](https://babashka.org) is a Clojure runtime built for
-scripting. It starts in tens of milliseconds, ships with a curated
-set of libraries (HTTP, JSON, hiccup, EDN, processes, …), and supports
+scripting. It ships with a curated set of libraries (HTTP, JSON,
+hiccup, EDN, processes, …) and supports
 [pods](https://github.com/babashka/babashka/blob/master/doc/projects.md#pods)
-for dropping in things like SQLite, AWS, HTML parsing, and more — all
-without a JVM. That makes it a particularly good fit for notebooks:
-the cost of "spin up a new bb process per render" is rounding error
-against the actual rendering work.
+for dropping in things like SQLite, AWS, HTML parsing, and more,
+without requiring a JVM.
 
 ## Use Babqua for…
 
@@ -103,8 +99,8 @@ convention.
 2. When Quarto renders the document, the Babqua filter intercepts
    these blocks
 3. A single Babashka process evaluates all of them in order, in the
-   document's directory (so your `bb.edn` deps and pods are
-   available)
+   project root (or the document's directory for standalone files),
+   so a sibling `bb.edn` is auto-loaded for deps and pods
 4. Results are rendered into the document — as code output, HTML,
    charts, diagrams, or markdown — based on
    [Kindly kinds](kindly-kinds.qmd)
@@ -138,6 +134,8 @@ the [Demo](demo.qmd) to see evaluated examples.
   (HTML, charts, diagrams, math, …)
 - [Authoring Babqua documents](authoring.qmd) — code-block attributes,
   per-block options, document-level Quarto features
-- [How It Works](how-it-works.qmd) — architecture, two-pass filter,
+- [How It Works](how-it-works.qmd) — architecture, three-pass filter,
   bb invocation, runtime
 - [Demo](demo.qmd) — evaluated examples of all output kinds
+- [Contributing](contributing.qmd) — repo layout, local rendering,
+  the symlink convention (for people working on Babqua itself)
