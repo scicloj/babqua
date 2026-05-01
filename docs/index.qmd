@@ -25,6 +25,10 @@ Babqua is the sibling of [Janqua](https://github.com/scicloj/janqua),
 which targets [Jank](https://jank-lang.org). Same Quarto-filter
 pattern, same Kindly vocabulary, different host language.
 
+Babqua already powers the [first Babashka post on
+Clojure Civitas](https://clojurecivitas.org/babashka/hello.html) —
+the Clojure community's [collaborative space](https://clojurecivitas.org/).
+
 ::: {.callout-note}
 Babqua is at an **experimental stage**. Things may change, and some
 rough edges are expected. Feedback, bug reports, and ideas are very

@@ -7,7 +7,7 @@ This chapter explains the internals of Babqua — how your
 
 Babqua is a [Pandoc Lua filter](https://pandoc.org/lua-filters.html).
 When Quarto renders a `.qmd` file, it calls
-[Pandoc](https://pandoc.org/) under the hood. Pandoc reads the
+[Pandoc](https://pandoc.org/) internally. Pandoc reads the
 document, builds an abstract syntax tree (AST), and runs any filters
 specified in the frontmatter. The Babqua filter intercepts code
 blocks marked with the `.bb` class, evaluates them through a single
@@ -25,18 +25,21 @@ flowchart LR
 ```
 
 Where Janqua bootstraps helper functions over the wire and parses
-Clojure-printed output, Babqua leans on Babashka's batteries —
-hiccup, cheshire, EDN are all built in. The Lua filter stays thin:
+Clojure-printed output, Babqua uses libraries Babashka bundles —
+hiccup, cheshire, and EDN are built in. The Lua filter stays thin:
 the bb-side runtime detects the Kindly kind and pre-renders the
-value into HTML / JSON / markdown, and the filter just inserts the
+value into HTML / JSON / markdown, and the filter inserts the
 result.
 
 ## Three filter passes
 
-Pandoc visits Meta after Block elements within a single filter pass,
-which is awkward for a workflow that needs to evaluate all blocks
-together before rendering any of them. Babqua splits the work into
-three passes:
+A Pandoc Lua filter exposes handler functions named after AST node
+types — `CodeBlock` (one per fenced code block), `Meta` (the
+document's frontmatter), and `Pandoc` (the whole document, called at
+the end of a pass). Within one pass, every `CodeBlock` is visited
+*before* the `Pandoc` handler runs, so a single-pass design can't
+substitute a result into a `CodeBlock` — bb hasn't been called yet.
+Babqua splits the work into three passes:
 
 1. **Collect** — every `.bb` block's source is recorded into a
    module-level list.
@@ -89,14 +92,16 @@ stdout. The Lua filter scans for the JSON line, decodes it via
 ## Two invocation paths
 
 The runtime contract above is identical in both modes; only the
-delivery differs.
+delivery differs. The filter picks one-shot when no persistent nREPL
+session is running, and persistent when there is — both
+`quarto render` and `quarto preview` follow the same rule.
 
 ### One-shot
 
-The default for `quarto render`. The filter writes the script to a
-temp file inside a per-render mode-0700 directory and runs
-`bb <script>` directly. A fresh bb starts, `load-file`s the runtime,
-evaluates the blocks, prints the JSON response, and exits.
+The default. The filter writes the script to a temp file inside a
+per-render mode-0700 directory and runs `bb <script>` directly. A
+fresh bb starts, `load-file`s the runtime, evaluates the blocks,
+prints the JSON response, and exits.
 
 ### Persistent
 
@@ -177,7 +182,6 @@ it loudly) and each affected block in the rendered document gets a
 | Kind-to-format dispatch | — | yes |
 | Stdout capture | — | yes |
 
-This division means Lua is the wrong place for data-shape decisions
-when the host language has a great library for them — and Babashka
-does. Adding a new kind that doesn't need new CDN scripts is a
-runtime-only change.
+This division puts data-shape decisions in the host language, where
+Babashka's bundled libraries handle them. Adding a new kind that
+doesn't need new CDN scripts is a runtime-only change.

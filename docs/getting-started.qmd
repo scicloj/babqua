@@ -96,6 +96,23 @@ quarto render hello.qmd
 This launches a single Babashka process, evaluates the code blocks in
 order, and produces `hello.html`.
 
+## Preview mode
+
+For iterative writing, use:
+
+```bash
+quarto preview hello.qmd
+```
+
+Quarto opens the rendered page in a browser and re-renders on every
+save, so you see your changes as you write. By default each save
+spawns a fresh bb process; for documents that load heavy pods or do
+expensive setup, Babqua can keep a persistent bb session warm across
+saves so you only pay the startup cost once.
+
+See [Workflow](workflow.qmd) for the persistent-session commands and
+the `reset-on-render` option.
+
 ## Trust model
 
 Rendering a Babqua document evaluates its `.bb` blocks as ordinary
@@ -106,10 +123,12 @@ notebook environment that evaluates user code.
 
 ## Next steps
 
-- See [Workflow](workflow.qmd) for render vs preview modes and
+- See [Workflow](workflow.qmd) for persistent preview sessions and
   publishing
 - See [Kindly kinds](kindly-kinds.qmd) for controlling how each
   result renders (HTML, charts, diagrams, math, …)
 - See [Authoring Babqua documents](authoring.qmd) for code-block
   attributes and per-block options
 - See the [Demo](demo.qmd) for evaluated examples
+- For a real-world Babqua-rendered document, see the
+  [first Babashka post on Clojure Civitas](https://clojurecivitas.org/babashka/hello.html)

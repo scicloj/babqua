@@ -64,8 +64,3 @@ cd docs && quarto render demo.qmd
 
 `demo.qmd` exercises every Kindly kind plus stdout, errors, and a
 live HTTP fetch in a single file.
-
-## Releases
-
-Tags are cut from `main`. The version-bump goes in its own commit,
-separate from any pre-release fixes.

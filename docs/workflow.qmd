@@ -24,7 +24,7 @@ bb script and they're available inside notebook cells.
 
 ## Preview mode
 
-`quarto preview` re-renders on every save. Out of the box, each save
+`quarto preview` re-renders on every save. By default, each save
 spawns a fresh bb process. For documents that load heavy pods or do
 expensive setup, you can opt into a persistent bb session that keeps
 state warm across saves:

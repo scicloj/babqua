@@ -8,15 +8,37 @@ filters:
 The previous chapter ([Kindly kinds](kindly-kinds.qmd)) covered how to
 control the rendering of a *value*. This chapter covers the knobs
 *around* `.bb` blocks — display attributes (`echo`, `eval`), Babqua's
-`output=` override, per-block options (output suppression, sizing) —
+renderer override (`output=`), per-block options (output suppression,
+sizing) —
 and finishes with the document-level Quarto features (math, callouts)
 that pair with live evaluation.
 
-## Code block attributes
+## Where options can go
 
-The Quarto-standard `echo` and `eval` attributes go on the
-**code-block fence** (the opening line of a code block, e.g.
-`` ```{.clojure .bb echo=false} ``):
+Babqua reads block-level options from four places:
+
+- **Fence attribute** — on the opening line of a code block, e.g.
+  `` ```{.clojure .bb echo=false} ``.
+- **`#|` cell directive** — Quarto's `#| key: value` syntax at the
+  top of the block. Babqua parses these and applies them as if they'd
+  been written on the fence, then strips them from the source:
+
+  ```{.clojure .bb}
+  #| output: hidden
+  (def magic-number 42)
+  ```
+- **Document frontmatter** — under a top-level `babqua:` key, for
+  doc-wide defaults. Only some options support this.
+- **`:kindly/options` metadata** — on the value, for layout options
+  that library functions can attach via `with-meta` / `vary-meta`.
+
+For options that accept more than one source, the highest-priority
+source wins, falling back to the built-in default. The per-option
+tables below note where each can go.
+
+## Display: echo, eval
+
+Quarto-standard. Set via fence attribute or `#|` directive.
 
 | Attribute | Effect |
 |:----------|:-------|
@@ -28,8 +50,14 @@ The Quarto-standard `echo` and `eval` attributes go on the
 [:div "Only the rendered HTML appears — no source code shown"]
 ```
 
-Babqua also recognizes an `output=` attribute that picks a renderer
-when the value isn't tagged with Kindly metadata:
+See the
+[Quarto documentation on code cells](https://quarto.org/docs/reference/cells/)
+for the full set of standard attributes.
+
+## Renderer override: output=
+
+`output=` picks a renderer when the value isn't tagged with Kindly
+metadata.
 
 | Attribute | Effect |
 |:----------|:-------|
@@ -47,29 +75,11 @@ This is also the escape hatch for inspecting a value that's tagged
 for chart rendering: `output=html` shows the JSON spec;
 `output=hidden` suppresses the cell entirely.
 
-See the
-[Quarto documentation on code cells](https://quarto.org/docs/reference/cells/)
-for more on the standard attributes.
+## Babqua knobs: hide-stdout, width, height
 
-## Quarto cell directives
-
-Quarto's `#| key: value` syntax also works at the top of a `.bb`
-block. Babqua parses the directives, applies them as if they'd been
-written on the fence, and strips them from the source before
-evaluation:
-
-```{.clojure .bb}
-#| output: hidden
-(def magic-number 42)
-```
-
-## Per-block options
-
-These are Babqua-specific knobs.
-
-| Option | Type | Default | Where to set it |
+| Option | Type | Default | Where |
 |:---|:---|:---|:---|
-| `hide-stdout` | boolean | `false` | fence, frontmatter, `#|` directive |
+| `hide-stdout` | boolean | `false` | fence, `#|`, frontmatter |
 | `width` | integer (px) | per chart kind | fence, `:kindly/options` |
 | `height` | integer (px) | per chart kind | fence, `:kindly/options` |
 
@@ -79,15 +89,11 @@ kinds (Plotly, Vega-Lite, Highcharts) auto-fit and have no built-in
 pixel default.
 
 `hide-stdout` is an evaluation/runtime concern; `width` and `height`
-are layout concerns and Babqua also reads them from the value's
-`:kindly/options` metadata.
+are layout concerns, which is why they additionally read from
+`:kindly/options` — library functions can attach sizing to a value
+without the caller having to set it.
 
-For each option, the highest-priority source that sets it wins,
-falling back through the others to the built-in default.
-
-### Fence attribute
-
-Set on the opening line of a code block:
+Fence example:
 
 ````
 ```{.clojure .bb hide-stdout=true}
@@ -104,9 +110,7 @@ Set on the opening line of a code block:
 ```
 ````
 
-### Frontmatter (`hide-stdout` only)
-
-Doc-wide default for `hide-stdout` goes in the YAML header:
+Frontmatter default for `hide-stdout`:
 
 ```yaml
 ---
@@ -117,12 +121,7 @@ babqua:
 ---
 ```
 
-`width` and `height` aren't read from frontmatter — set them per
-block via the fence or via `:kindly/options`.
-
-### `:kindly/options` (`width` and `height` only)
-
-Annotate the value's metadata under `:kindly/options`:
+`:kindly/options` metadata for sizing:
 
 ```{.clojure .bb}
 ^{:kindly/kind :kind/plotly
@@ -130,9 +129,6 @@ Annotate the value's metadata under `:kindly/options`:
 {:data [{:x [1 2 3] :y [10 20 15] :type "bar"}]
  :layout {:title "Sized via :kindly/options"}}
 ```
-
-Library functions can attach these via `with-meta` / `vary-meta`, so
-callers don't need to set them at the call site.
 
 ## Combining with other filters
 

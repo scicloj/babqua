@@ -205,15 +205,14 @@ it to their return values with `with-meta`. Define a `bar-chart`
 function that produces a Plotly chart and tags it as `:kind/plotly`:
 
 ```{.clojure .bb}
-^:kind/hidden
-[(defn bar-chart [labels values]
-   (with-meta
-     {:data [{:x labels :y values :type "bar"}]
-      :layout {:title "Bar Chart"}}
-     {:kindly/kind :kind/plotly}))]
+(defn bar-chart [labels values]
+  (with-meta
+    {:data [{:x labels :y values :type "bar"}]
+     :layout {:title "Bar Chart"}}
+    {:kindly/kind :kind/plotly}))
 ```
 
-Now just call the function — no annotation needed at the call site:
+Now call the function — no annotation needed at the call site:
 
 ```{.clojure .bb}
 (bar-chart ["apples" "bananas" "cherries"] [12 19 7])

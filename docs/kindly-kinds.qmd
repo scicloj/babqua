@@ -272,8 +272,8 @@ hiccup:
       {:kindly/kind :kind/hiccup})))
 ```
 
-Now simply calling the function renders the chart — no annotation
-needed at the call site:
+Now calling the function renders the chart — no annotation needed
+at the call site:
 
 ```{.clojure .bb}
 (bar-chart ["a" "b" "c"] [10 20 15])
@@ -318,4 +318,4 @@ Babqua automatically unwraps the vector for all string-valued kinds
 | `^:kind/cytoscape` | map | [Cytoscape](https://js.cytoscape.org/) graph |
 | `^:kind/highcharts` | map | [Highcharts](https://www.highcharts.com/) chart |
 | `^:kind/table` | map or seq-of-maps | HTML table |
-| _(none)_ | any | code output (vars from `(def …)` are suppressed) |
+| _(none)_ | any | code output |
