@@ -24,10 +24,23 @@ bb script and they're available inside notebook cells.
 
 ## Preview mode
 
-`quarto preview` re-renders on every save. By default, each save
-spawns a fresh bb process. For documents that load heavy pods or do
-expensive setup, you can opt into a persistent bb session that keeps
-state warm across saves:
+```bash
+quarto preview hello.qmd
+```
+
+Quarto opens the rendered page in a browser and re-renders on every
+save. Each save spawns a fresh bb process — the same one-shot
+behavior as `quarto render`, just triggered automatically as you
+write.
+
+For most documents, that's all you need. If your document loads
+heavy pods or does expensive setup you'd rather not pay for on every
+save, the next section covers an optional persistent session.
+
+## Persistent bb session (optional)
+
+For warm state across saves, start a long-lived bb session before
+running preview:
 
 ```bash
 # Start once per session (typically before `quarto preview`)
@@ -46,7 +59,8 @@ across renders the way they would in any Clojure REPL — removing
 `(def x 42)` from a block doesn't unbind `x` until you reset.
 
 That's the standard Clojure-ecosystem feel; if you'd rather have a
-fresh process per save, add this to your document's frontmatter:
+fresh process per save (one-shot semantics, even with the session
+running), add this to your document's frontmatter:
 
 ```yaml
 babqua:
