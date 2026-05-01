@@ -211,8 +211,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#install-the-extension" id="toc-install-the-extension" class="nav-link" data-scroll-target="#install-the-extension"><span class="header-section-number">1.3</span> Install the extension</a></li>
   <li><a href="#write-a-document" id="toc-write-a-document" class="nav-link" data-scroll-target="#write-a-document"><span class="header-section-number">1.4</span> Write a document</a></li>
   <li><a href="#render-it" id="toc-render-it" class="nav-link" data-scroll-target="#render-it"><span class="header-section-number">1.5</span> Render it</a></li>
-  <li><a href="#trust-model" id="toc-trust-model" class="nav-link" data-scroll-target="#trust-model"><span class="header-section-number">1.6</span> Trust model</a></li>
-  <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps"><span class="header-section-number">1.7</span> Next steps</a></li>
+  <li><a href="#preview-mode" id="toc-preview-mode" class="nav-link" data-scroll-target="#preview-mode"><span class="header-section-number">1.6</span> Preview mode</a></li>
+  <li><a href="#trust-model" id="toc-trust-model" class="nav-link" data-scroll-target="#trust-model"><span class="header-section-number">1.7</span> Trust model</a></li>
+  <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps"><span class="header-section-number">1.8</span> Next steps</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/scicloj/babqua/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -289,17 +290,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render hello.qmd</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This launches a single Babashka process, evaluates the code blocks in order, and produces <code>hello.html</code>.</p>
 </section>
-<section id="trust-model" class="level2" data-number="1.6">
-<h2 data-number="1.6" class="anchored" data-anchor-id="trust-model"><span class="header-section-number">1.6</span> Trust model</h2>
+<section id="preview-mode" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="preview-mode"><span class="header-section-number">1.6</span> Preview mode</h2>
+<p>For iterative writing, use:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> preview hello.qmd</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Quarto opens the rendered page in a browser and re-renders on every save, so you see your changes as you write. By default each save spawns a fresh bb process; for documents that load heavy pods or do expensive setup, Babqua can keep a persistent bb session warm across saves so you only pay the startup cost once.</p>
+<p>See <a href="./workflow.html">Workflow</a> for the persistent-session commands and the <code>reset-on-render</code> option.</p>
+</section>
+<section id="trust-model" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="trust-model"><span class="header-section-number">1.7</span> Trust model</h2>
 <p>Rendering a Babqua document evaluates its <code>.bb</code> blocks as ordinary Babashka code, with full filesystem, network, and shell access. Treat rendering an untrusted <code>.qmd</code> the same as running its author’s bb script on your machine — the same trust model as Clay or any other notebook environment that evaluates user code.</p>
 </section>
-<section id="next-steps" class="level2" data-number="1.7">
-<h2 data-number="1.7" class="anchored" data-anchor-id="next-steps"><span class="header-section-number">1.7</span> Next steps</h2>
+<section id="next-steps" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="next-steps"><span class="header-section-number">1.8</span> Next steps</h2>
 <ul>
-<li>See <a href="./workflow.html">Workflow</a> for render vs preview modes and publishing</li>
+<li>See <a href="./workflow.html">Workflow</a> for persistent preview sessions and publishing</li>
 <li>See <a href="./kindly-kinds.html">Kindly kinds</a> for controlling how each result renders (HTML, charts, diagrams, math, …)</li>
 <li>See <a href="./authoring.html">Authoring Babqua documents</a> for code-block attributes and per-block options</li>
 <li>See the <a href="./demo.html">Demo</a> for evaluated examples</li>
+<li>For a real-world Babqua-rendered document, see the <a href="https://clojurecivitas.org/babashka/hello.html">first Babashka post on Clojure Civitas</a></li>
 </ul>
 
 

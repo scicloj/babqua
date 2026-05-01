@@ -243,7 +243,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="preview-mode" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="preview-mode"><span class="header-section-number">2.2</span> Preview mode</h2>
-<p><code>quarto preview</code> re-renders on every save. Out of the box, each save spawns a fresh bb process. For documents that load heavy pods or do expensive setup, you can opt into a persistent bb session that keeps state warm across saves:</p>
+<p><code>quarto preview</code> re-renders on every save. By default, each save spawns a fresh bb process. For documents that load heavy pods or do expensive setup, you can opt into a persistent bb session that keeps state warm across saves:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Start once per session (typically before `quarto preview`)</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">bb</span> _extensions/scicloj/bb/babqua-lifecycle.bb start</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>

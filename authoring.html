@@ -252,19 +252,15 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#code-block-attributes" id="toc-code-block-attributes" class="nav-link active" data-scroll-target="#code-block-attributes"><span class="header-section-number">4.1</span> Code block attributes</a></li>
-  <li><a href="#quarto-cell-directives" id="toc-quarto-cell-directives" class="nav-link" data-scroll-target="#quarto-cell-directives"><span class="header-section-number">4.2</span> Quarto cell directives</a></li>
-  <li><a href="#per-block-options" id="toc-per-block-options" class="nav-link" data-scroll-target="#per-block-options"><span class="header-section-number">4.3</span> Per-block options</a>
+  <li><a href="#where-options-can-go" id="toc-where-options-can-go" class="nav-link active" data-scroll-target="#where-options-can-go"><span class="header-section-number">4.1</span> Where options can go</a></li>
+  <li><a href="#display-echo-eval" id="toc-display-echo-eval" class="nav-link" data-scroll-target="#display-echo-eval"><span class="header-section-number">4.2</span> Display: echo, eval</a></li>
+  <li><a href="#renderer-override-output" id="toc-renderer-override-output" class="nav-link" data-scroll-target="#renderer-override-output"><span class="header-section-number">4.3</span> Renderer override: output=</a></li>
+  <li><a href="#babqua-knobs-hide-stdout-width-height" id="toc-babqua-knobs-hide-stdout-width-height" class="nav-link" data-scroll-target="#babqua-knobs-hide-stdout-width-height"><span class="header-section-number">4.4</span> Babqua knobs: hide-stdout, width, height</a></li>
+  <li><a href="#combining-with-other-filters" id="toc-combining-with-other-filters" class="nav-link" data-scroll-target="#combining-with-other-filters"><span class="header-section-number">4.5</span> Combining with other filters</a></li>
+  <li><a href="#document-level-quarto-features" id="toc-document-level-quarto-features" class="nav-link" data-scroll-target="#document-level-quarto-features"><span class="header-section-number">4.6</span> Document-level Quarto features</a>
   <ul class="collapse">
-  <li><a href="#fence-attribute" id="toc-fence-attribute" class="nav-link" data-scroll-target="#fence-attribute"><span class="header-section-number">4.3.1</span> Fence attribute</a></li>
-  <li><a href="#frontmatter-hide-stdout-only" id="toc-frontmatter-hide-stdout-only" class="nav-link" data-scroll-target="#frontmatter-hide-stdout-only"><span class="header-section-number">4.3.2</span> Frontmatter (<code>hide-stdout</code> only)</a></li>
-  <li><a href="#kindlyoptions-width-and-height-only" id="toc-kindlyoptions-width-and-height-only" class="nav-link" data-scroll-target="#kindlyoptions-width-and-height-only"><span class="header-section-number">4.3.3</span> <code>:kindly/options</code> (<code>width</code> and <code>height</code> only)</a></li>
-  </ul></li>
-  <li><a href="#combining-with-other-filters" id="toc-combining-with-other-filters" class="nav-link" data-scroll-target="#combining-with-other-filters"><span class="header-section-number">4.4</span> Combining with other filters</a></li>
-  <li><a href="#document-level-quarto-features" id="toc-document-level-quarto-features" class="nav-link" data-scroll-target="#document-level-quarto-features"><span class="header-section-number">4.5</span> Document-level Quarto features</a>
-  <ul class="collapse">
-  <li><a href="#math" id="toc-math" class="nav-link" data-scroll-target="#math"><span class="header-section-number">4.5.1</span> Math</a></li>
-  <li><a href="#other-quarto-features" id="toc-other-quarto-features" class="nav-link" data-scroll-target="#other-quarto-features"><span class="header-section-number">4.5.2</span> Other Quarto features</a></li>
+  <li><a href="#math" id="toc-math" class="nav-link" data-scroll-target="#math"><span class="header-section-number">4.6.1</span> Math</a></li>
+  <li><a href="#other-quarto-features" id="toc-other-quarto-features" class="nav-link" data-scroll-target="#other-quarto-features"><span class="header-section-number">4.6.2</span> Other Quarto features</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/scicloj/babqua/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
@@ -291,10 +287,21 @@ window.Quarto = {
 </header>
 
 
-<p>The previous chapter (<a href="./kindly-kinds.html">Kindly kinds</a>) covered how to control the rendering of a <em>value</em>. This chapter covers the knobs <em>around</em> <code>.bb</code> blocks — display attributes (<code>echo</code>, <code>eval</code>), Babqua’s <code>output=</code> override, per-block options (output suppression, sizing) — and finishes with the document-level Quarto features (math, callouts) that pair with live evaluation.</p>
-<section id="code-block-attributes" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="code-block-attributes"><span class="header-section-number">4.1</span> Code block attributes</h2>
-<p>The Quarto-standard <code>echo</code> and <code>eval</code> attributes go on the <strong>code-block fence</strong> (the opening line of a code block, e.g. <code>```{.clojure .bb echo=false}</code>):</p>
+<p>The previous chapter (<a href="./kindly-kinds.html">Kindly kinds</a>) covered how to control the rendering of a <em>value</em>. This chapter covers the knobs <em>around</em> <code>.bb</code> blocks — display attributes (<code>echo</code>, <code>eval</code>), Babqua’s renderer override (<code>output=</code>), per-block options (output suppression, sizing) — and finishes with the document-level Quarto features (math, callouts) that pair with live evaluation.</p>
+<section id="where-options-can-go" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="where-options-can-go"><span class="header-section-number">4.1</span> Where options can go</h2>
+<p>Babqua reads block-level options from four places:</p>
+<ul>
+<li><p><strong>Fence attribute</strong> — on the opening line of a code block, e.g. <code>```{.clojure .bb echo=false}</code>.</p></li>
+<li><p><strong><code>#|</code> cell directive</strong> — Quarto’s <code>#| key: value</code> syntax at the top of the block. Babqua parses these and applies them as if they’d been written on the fence, then strips them from the source:</p></li>
+<li><p><strong>Document frontmatter</strong> — under a top-level <code>babqua:</code> key, for doc-wide defaults. Only some options support this.</p></li>
+<li><p><strong><code>:kindly/options</code> metadata</strong> — on the value, for layout options that library functions can attach via <code>with-meta</code> / <code>vary-meta</code>.</p></li>
+</ul>
+<p>For options that accept more than one source, the highest-priority source wins, falling back to the built-in default. The per-option tables below note where each can go.</p>
+</section>
+<section id="display-echo-eval" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="display-echo-eval"><span class="header-section-number">4.2</span> Display: echo, eval</h2>
+<p>Quarto-standard. Set via fence attribute or <code>#|</code> directive.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -318,7 +325,11 @@ window.Quarto = {
 <div>Only the rendered HTML appears — no source code shown</div>
 </div>
 </div>
-<p>Babqua also recognizes an <code>output=</code> attribute that picks a renderer when the value isn’t tagged with Kindly metadata:</p>
+<p>See the <a href="https://quarto.org/docs/reference/cells/">Quarto documentation on code cells</a> for the full set of standard attributes.</p>
+</section>
+<section id="renderer-override-output" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="renderer-override-output"><span class="header-section-number">4.3</span> Renderer override: output=</h2>
+<p><code>output=</code> picks a renderer when the value isn’t tagged with Kindly metadata.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -343,28 +354,16 @@ window.Quarto = {
 </table>
 <p>When both <code>:kindly/kind</code> metadata on the value and <code>output=</code> on the fence are set, <code>output=</code> wins. The fence attribute is the more explicit, local signal — treating it as an override matches Quarto’s own pattern of per-block attributes taking precedence over document-level defaults.</p>
 <p>This is also the escape hatch for inspecting a value that’s tagged for chart rendering: <code>output=html</code> shows the JSON spec; <code>output=hidden</code> suppresses the cell entirely.</p>
-<p>See the <a href="https://quarto.org/docs/reference/cells/">Quarto documentation on code cells</a> for more on the standard attributes.</p>
 </section>
-<section id="quarto-cell-directives" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="quarto-cell-directives"><span class="header-section-number">4.2</span> Quarto cell directives</h2>
-<p>Quarto’s <code>#| key: value</code> syntax also works at the top of a <code>.bb</code> block. Babqua parses the directives, applies them as if they’d been written on the fence, and strips them from the source before evaluation:</p>
-</section>
-<section id="per-block-options" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="per-block-options"><span class="header-section-number">4.3</span> Per-block options</h2>
-<p>These are Babqua-specific knobs.</p>
+<section id="babqua-knobs-hide-stdout-width-height" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="babqua-knobs-hide-stdout-width-height"><span class="header-section-number">4.4</span> Babqua knobs: hide-stdout, width, height</h2>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Option</th>
 <th style="text-align: left;">Type</th>
 <th style="text-align: left;">Default</th>
-<th style="text-align: left;">Where to set it</th>
+<th style="text-align: left;">Where</th>
 </tr>
 </thead>
 <tbody>
@@ -372,7 +371,7 @@ window.Quarto = {
 <td style="text-align: left;"><code>hide-stdout</code></td>
 <td style="text-align: left;">boolean</td>
 <td style="text-align: left;"><code>false</code></td>
-<td style="text-align: left;">fence, frontmatter, <code>#|</code> directive</td>
+<td style="text-align: left;">fence, <code>#|</code>, frontmatter</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>width</code></td>
@@ -389,11 +388,8 @@ window.Quarto = {
 </tbody>
 </table>
 <p>ECharts and Cytoscape default to 600 × 400 pixels because their libraries refuse to render to a size-less container. Other chart kinds (Plotly, Vega-Lite, Highcharts) auto-fit and have no built-in pixel default.</p>
-<p><code>hide-stdout</code> is an evaluation/runtime concern; <code>width</code> and <code>height</code> are layout concerns and Babqua also reads them from the value’s <code>:kindly/options</code> metadata.</p>
-<p>For each option, the highest-priority source that sets it wins, falling back through the others to the built-in default.</p>
-<section id="fence-attribute" class="level3" data-number="4.3.1">
-<h3 data-number="4.3.1" class="anchored" data-anchor-id="fence-attribute"><span class="header-section-number">4.3.1</span> Fence attribute</h3>
-<p>Set on the opening line of a code block:</p>
+<p><code>hide-stdout</code> is an evaluation/runtime concern; <code>width</code> and <code>height</code> are layout concerns, which is why they additionally read from <code>:kindly/options</code> — library functions can attach sizing to a value without the caller having to set it.</p>
+<p>Fence example:</p>
 <pre><code>```{.clojure .bb hide-stdout=true}
 (do (println "noisy debug")
     42)
@@ -403,21 +399,14 @@ window.Quarto = {
 {:data [{:x [1 2 3 4 5] :y [4 1 5 3 2] :type "bar"}]
  :layout {:title "Sized 400×250"}}
 ```</code></pre>
-</section>
-<section id="frontmatter-hide-stdout-only" class="level3" data-number="4.3.2">
-<h3 data-number="4.3.2" class="anchored" data-anchor-id="frontmatter-hide-stdout-only"><span class="header-section-number">4.3.2</span> Frontmatter (<code>hide-stdout</code> only)</h3>
-<p>Doc-wide default for <code>hide-stdout</code> goes in the YAML header:</p>
+<p>Frontmatter default for <code>hide-stdout</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filters</span><span class="kw">:</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> bb</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">babqua</span><span class="kw">:</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">hide-stdout</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>width</code> and <code>height</code> aren’t read from frontmatter — set them per block via the fence or via <code>:kindly/options</code>.</p>
-</section>
-<section id="kindlyoptions-width-and-height-only" class="level3" data-number="4.3.3">
-<h3 data-number="4.3.3" class="anchored" data-anchor-id="kindlyoptions-width-and-height-only"><span class="header-section-number">4.3.3</span> <code>:kindly/options</code> (<code>width</code> and <code>height</code> only)</h3>
-<p>Annotate the value’s metadata under <code>:kindly/options</code>:</p>
+<p><code>:kindly/options</code> metadata for sizing:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>^{<span class="at">:kindly/kind</span> <span class="at">:kind/plotly</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">:kindly/options</span> {<span class="at">:width</span> <span class="dv">800</span> <span class="at">:height</span> <span class="dv">500</span>}}</span>
@@ -427,21 +416,19 @@ window.Quarto = {
 <div id="babqua-plot-1" style="width:800.0px;height:500.0px;"></div><script src="https://cdn.plot.ly/plotly-2.35.0.min.js" integrity="sha384-TAqBiqItCr14J//ULLD26bSQ8Z6uPnlisSwkvWaqP8SCSiDkgR8jNknuAv8uxSOT" crossorigin="anonymous"></script><script>var spec={"data":[{"x":[1,2,3],"y":[10,20,15],"type":"bar"}],"layout":{"title":"Sized via :kindly/options"}};Plotly.newPlot("babqua-plot-1", spec.data, spec.layout);</script>
 </div>
 </div>
-<p>Library functions can attach these via <code>with-meta</code> / <code>vary-meta</code>, so callers don’t need to set them at the call site.</p>
 </section>
-</section>
-<section id="combining-with-other-filters" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="combining-with-other-filters"><span class="header-section-number">4.4</span> Combining with other filters</h2>
+<section id="combining-with-other-filters" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="combining-with-other-filters"><span class="header-section-number">4.5</span> Combining with other filters</h2>
 <p>If you list more than one filter in <code>filters:</code>, put <code>bb</code> first — Babqua needs the <code>.bb</code> class to still be on the block when it runs:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filters</span><span class="kw">:</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> bb</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> some-other-filter</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="document-level-quarto-features" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="document-level-quarto-features"><span class="header-section-number">4.5</span> Document-level Quarto features</h2>
+<section id="document-level-quarto-features" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="document-level-quarto-features"><span class="header-section-number">4.6</span> Document-level Quarto features</h2>
 <p>Quarto’s authoring features apply to a <code>.qmd</code> file the same way they would in any Quarto document — Babqua only intervenes for <code>.bb</code> code blocks. A few worth knowing:</p>
-<section id="math" class="level3" data-number="4.5.1">
-<h3 data-number="4.5.1" class="anchored" data-anchor-id="math"><span class="header-section-number">4.5.1</span> Math</h3>
+<section id="math" class="level3" data-number="4.6.1">
+<h3 data-number="4.6.1" class="anchored" data-anchor-id="math"><span class="header-section-number">4.6.1</span> Math</h3>
 <p>Quarto recognizes LaTeX math in prose: write <code>$\sqrt{x^2 + y^2}$</code> for inline math like <span class="math inline">\(\sqrt{x^2 + y^2}\)</span>, or <code>$$ ... $$</code> for a display equation:</p>
 <p><span class="math display">\[\int_0^\infty e^{-x^2}\,dx = \frac{\sqrt{\pi}}{2}\]</span></p>
 <p>The same Quarto pipeline handles math returned from <code>^:kind/md</code> — Babqua emits the markdown string into Pandoc’s AST and Quarto then processes the math:</p>
@@ -453,8 +440,8 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="other-quarto-features" class="level3" data-number="4.5.2">
-<h3 data-number="4.5.2" class="anchored" data-anchor-id="other-quarto-features"><span class="header-section-number">4.5.2</span> Other Quarto features</h3>
+<section id="other-quarto-features" class="level3" data-number="4.6.2">
+<h3 data-number="4.6.2" class="anchored" data-anchor-id="other-quarto-features"><span class="header-section-number">4.6.2</span> Other Quarto features</h3>
 <p>Callouts, frontmatter (title, theme, format options), cross-references, and citations are all standard Quarto. See the <a href="https://quarto.org/docs/authoring/">Quarto authoring guide</a> for the full set.</p>
 
 

@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Babqua",
     "section": "",
-    "text": "Overview\nBabqua is a Quarto extension for writing Babashka code in visual documents. Each {.clojure .bb} block in a .qmd file is evaluated by Babashka during rendering, producing code output, charts, diagrams, tables, or computed HTML.\nCharts render via Plotly, Vega-Lite, ECharts, Cytoscape, or Highcharts; diagrams via Mermaid and Graphviz; tables as HTML. Rendering follows the Kindly convention, the same way Clay handles Clojure docs.\nBabqua is the sibling of Janqua, which targets Jank. Same Quarto-filter pattern, same Kindly vocabulary, different host language.",
+    "text": "Overview\nBabqua is a Quarto extension for writing Babashka code in visual documents. Each {.clojure .bb} block in a .qmd file is evaluated by Babashka during rendering, producing code output, charts, diagrams, tables, or computed HTML.\nCharts render via Plotly, Vega-Lite, ECharts, Cytoscape, or Highcharts; diagrams via Mermaid and Graphviz; tables as HTML. Rendering follows the Kindly convention, the same way Clay handles Clojure docs.\nBabqua is the sibling of Janqua, which targets Jank. Same Quarto-filter pattern, same Kindly vocabulary, different host language.\nBabqua already powers the first Babashka post on Clojure Civitas — the Clojure community’s collaborative space.",
     "crumbs": [
       "Overview"
     ]
@@ -140,11 +140,21 @@
     ]
   },
   {
+    "objectID": "getting-started.html#preview-mode",
+    "href": "getting-started.html#preview-mode",
+    "title": "1  Getting Started",
+    "section": "1.6 Preview mode",
+    "text": "1.6 Preview mode\nFor iterative writing, use:\nquarto preview hello.qmd\nQuarto opens the rendered page in a browser and re-renders on every save, so you see your changes as you write. By default each save spawns a fresh bb process; for documents that load heavy pods or do expensive setup, Babqua can keep a persistent bb session warm across saves so you only pay the startup cost once.\nSee Workflow for the persistent-session commands and the reset-on-render option.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Getting Started</span>"
+    ]
+  },
+  {
     "objectID": "getting-started.html#trust-model",
     "href": "getting-started.html#trust-model",
     "title": "1  Getting Started",
-    "section": "1.6 Trust model",
-    "text": "1.6 Trust model\nRendering a Babqua document evaluates its .bb blocks as ordinary Babashka code, with full filesystem, network, and shell access. Treat rendering an untrusted .qmd the same as running its author’s bb script on your machine — the same trust model as Clay or any other notebook environment that evaluates user code.",
+    "section": "1.7 Trust model",
+    "text": "1.7 Trust model\nRendering a Babqua document evaluates its .bb blocks as ordinary Babashka code, with full filesystem, network, and shell access. Treat rendering an untrusted .qmd the same as running its author’s bb script on your machine — the same trust model as Clay or any other notebook environment that evaluates user code.",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Getting Started</span>"
     ]
@@ -153,8 +163,8 @@
     "objectID": "getting-started.html#next-steps",
     "href": "getting-started.html#next-steps",
     "title": "1  Getting Started",
-    "section": "1.7 Next steps",
-    "text": "1.7 Next steps\n\nSee Workflow for render vs preview modes and publishing\nSee Kindly kinds for controlling how each result renders (HTML, charts, diagrams, math, …)\nSee Authoring Babqua documents for code-block attributes and per-block options\nSee the Demo for evaluated examples",
+    "section": "1.8 Next steps",
+    "text": "1.8 Next steps\n\nSee Workflow for persistent preview sessions and publishing\nSee Kindly kinds for controlling how each result renders (HTML, charts, diagrams, math, …)\nSee Authoring Babqua documents for code-block attributes and per-block options\nSee the Demo for evaluated examples\nFor a real-world Babqua-rendered document, see the first Babashka post on Clojure Civitas",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Getting Started</span>"
     ]
@@ -184,7 +194,7 @@
     "href": "workflow.html#preview-mode",
     "title": "2  Workflow",
     "section": "2.2 Preview mode",
-    "text": "2.2 Preview mode\nquarto preview re-renders on every save. Out of the box, each save spawns a fresh bb process. For documents that load heavy pods or do expensive setup, you can opt into a persistent bb session that keeps state warm across saves:\n# Start once per session (typically before `quarto preview`)\nbb _extensions/scicloj/bb/babqua-lifecycle.bb start\n\n# Now run preview as normal — the filter detects the live REPL and\n# routes evaluations through it.\nquarto preview hello.qmd\n\n# When you're done, tear it down.\nbb _extensions/scicloj/bb/babqua-lifecycle.bb stop\nWhile the persistent session is running, defs and requires carry across renders the way they would in any Clojure REPL — removing (def x 42) from a block doesn’t unbind x until you reset.\nThat’s the standard Clojure-ecosystem feel; if you’d rather have a fresh process per save, add this to your document’s frontmatter:\nbabqua:\n  reset-on-render: true\nBabqua then stops the running session before the render begins, this render runs as one-shot, and the persistent session stays down until you start it again.\nA running session creates three state files in your project root: .babqua-pid and .babqua-nrepl-port (removed by stop), and .babqua-bb.log (the captured bb stdout/stderr — kept for post-mortem inspection, truncated on each start). Add all three to your .gitignore if they aren’t already covered.",
+    "text": "2.2 Preview mode\nquarto preview re-renders on every save. By default, each save spawns a fresh bb process. For documents that load heavy pods or do expensive setup, you can opt into a persistent bb session that keeps state warm across saves:\n# Start once per session (typically before `quarto preview`)\nbb _extensions/scicloj/bb/babqua-lifecycle.bb start\n\n# Now run preview as normal — the filter detects the live REPL and\n# routes evaluations through it.\nquarto preview hello.qmd\n\n# When you're done, tear it down.\nbb _extensions/scicloj/bb/babqua-lifecycle.bb stop\nWhile the persistent session is running, defs and requires carry across renders the way they would in any Clojure REPL — removing (def x 42) from a block doesn’t unbind x until you reset.\nThat’s the standard Clojure-ecosystem feel; if you’d rather have a fresh process per save, add this to your document’s frontmatter:\nbabqua:\n  reset-on-render: true\nBabqua then stops the running session before the render begins, this render runs as one-shot, and the persistent session stays down until you start it again.\nA running session creates three state files in your project root: .babqua-pid and .babqua-nrepl-port (removed by stop), and .babqua-bb.log (the captured bb stdout/stderr — kept for post-mortem inspection, truncated on each start). Add all three to your .gitignore if they aren’t already covered.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Workflow</span>"
     ]
@@ -344,7 +354,7 @@
     "href": "kindly-kinds.html#annotating-in-library-functions",
     "title": "3  Kindly kinds",
     "section": "3.15 Annotating in library functions",
-    "text": "3.15 Annotating in library functions\nThe ^:kind/... reader syntax attaches metadata at the call site. But metadata can also be attached programmatically with with-meta or vary-meta, which means library functions can annotate their return values. The caller doesn’t need to know about the rendering — the function handles it.\nFor example, a function that builds an SVG bar chart and tags it as hiccup:\n\n(defn bar-chart [labels values]\n  (let [bar-width 40\n        gap       10\n        max-val   (apply max values)\n        height    120\n        bars      (map-indexed\n                    (fn [i [label val]]\n                      (let [x          (+ 10 (* i (+ bar-width gap)))\n                            bar-height (* (/ val max-val) height)]\n                        [:g\n                         [:rect {:x x :y (- height bar-height)\n                                 :width bar-width :height bar-height\n                                 :fill \"steelblue\"}]\n                         [:text {:x (+ x (/ bar-width 2)) :y (+ height 15)\n                                 :text-anchor \"middle\" :font-size \"12\"}\n                          label]]))\n                    (map vector labels values))\n        total-width (+ 20 (* (count labels) (+ bar-width gap)))]\n    (with-meta\n      (into [:svg {:width total-width :height (+ height 25)\n                   :xmlns \"http://www.w3.org/2000/svg\"}] bars)\n      {:kindly/kind :kind/hiccup})))\n\nNow simply calling the function renders the chart — no annotation needed at the call site:\n\n(bar-chart [\"a\" \"b\" \"c\"] [10 20 15])\n\nabc\n\n\nThis is a key idea behind Kindly: rendering intent lives in the metadata of values, not in the document markup. Libraries can provide visualization functions that render correctly in any Kindly-aware tool — Babqua, Clay, Janqua, or others.",
+    "text": "3.15 Annotating in library functions\nThe ^:kind/... reader syntax attaches metadata at the call site. But metadata can also be attached programmatically with with-meta or vary-meta, which means library functions can annotate their return values. The caller doesn’t need to know about the rendering — the function handles it.\nFor example, a function that builds an SVG bar chart and tags it as hiccup:\n\n(defn bar-chart [labels values]\n  (let [bar-width 40\n        gap       10\n        max-val   (apply max values)\n        height    120\n        bars      (map-indexed\n                    (fn [i [label val]]\n                      (let [x          (+ 10 (* i (+ bar-width gap)))\n                            bar-height (* (/ val max-val) height)]\n                        [:g\n                         [:rect {:x x :y (- height bar-height)\n                                 :width bar-width :height bar-height\n                                 :fill \"steelblue\"}]\n                         [:text {:x (+ x (/ bar-width 2)) :y (+ height 15)\n                                 :text-anchor \"middle\" :font-size \"12\"}\n                          label]]))\n                    (map vector labels values))\n        total-width (+ 20 (* (count labels) (+ bar-width gap)))]\n    (with-meta\n      (into [:svg {:width total-width :height (+ height 25)\n                   :xmlns \"http://www.w3.org/2000/svg\"}] bars)\n      {:kindly/kind :kind/hiccup})))\n\nNow calling the function renders the chart — no annotation needed at the call site:\n\n(bar-chart [\"a\" \"b\" \"c\"] [10 20 15])\n\nabc\n\n\nThis is a key idea behind Kindly: rendering intent lives in the metadata of values, not in the document markup. Libraries can provide visualization functions that render correctly in any Kindly-aware tool — Babqua, Clay, Janqua, or others.",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Kindly kinds</span>"
     ]
@@ -364,7 +374,7 @@
     "href": "kindly-kinds.html#summary-of-kinds",
     "title": "3  Kindly kinds",
     "section": "3.17 Summary of kinds",
-    "text": "3.17 Summary of kinds\n\n\n\nKind\nValue type\nRenders as\n\n\n\n\n^:kind/hiccup\nvector (hiccup)\nHTML\n\n\n^:kind/html\n[string]\nraw HTML\n\n\n^:kind/md\n[string]\nmarkdown\n\n\n^:kind/hidden\nany\nnothing (evaluates silently)\n\n\n^:kind/mermaid\n[string]\nMermaid diagram\n\n\n^:kind/graphviz\n[string]\nGraphviz diagram\n\n\n^:kind/tex\n[string]\nLaTeX formula\n\n\n^:kind/code\n[string]\nsyntax-highlighted code\n\n\n^:kind/vega-lite\nmap\nVega-Lite chart\n\n\n^:kind/plotly\nmap\nPlotly chart\n\n\n^:kind/echarts\nmap\nECharts chart\n\n\n^:kind/cytoscape\nmap\nCytoscape graph\n\n\n^:kind/highcharts\nmap\nHighcharts chart\n\n\n^:kind/table\nmap or seq-of-maps\nHTML table\n\n\n(none)\nany\ncode output (vars from (def …) are suppressed)",
+    "text": "3.17 Summary of kinds\n\n\n\nKind\nValue type\nRenders as\n\n\n\n\n^:kind/hiccup\nvector (hiccup)\nHTML\n\n\n^:kind/html\n[string]\nraw HTML\n\n\n^:kind/md\n[string]\nmarkdown\n\n\n^:kind/hidden\nany\nnothing (evaluates silently)\n\n\n^:kind/mermaid\n[string]\nMermaid diagram\n\n\n^:kind/graphviz\n[string]\nGraphviz diagram\n\n\n^:kind/tex\n[string]\nLaTeX formula\n\n\n^:kind/code\n[string]\nsyntax-highlighted code\n\n\n^:kind/vega-lite\nmap\nVega-Lite chart\n\n\n^:kind/plotly\nmap\nPlotly chart\n\n\n^:kind/echarts\nmap\nECharts chart\n\n\n^:kind/cytoscape\nmap\nCytoscape graph\n\n\n^:kind/highcharts\nmap\nHighcharts chart\n\n\n^:kind/table\nmap or seq-of-maps\nHTML table\n\n\n(none)\nany\ncode output",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Kindly kinds</span>"
     ]
@@ -374,37 +384,47 @@
     "href": "authoring.html",
     "title": "4  Authoring Babqua documents",
     "section": "",
-    "text": "4.1 Code block attributes\nThe previous chapter (Kindly kinds) covered how to control the rendering of a value. This chapter covers the knobs around .bb blocks — display attributes (echo, eval), Babqua’s output= override, per-block options (output suppression, sizing) — and finishes with the document-level Quarto features (math, callouts) that pair with live evaluation.\nThe Quarto-standard echo and eval attributes go on the code-block fence (the opening line of a code block, e.g. ```{.clojure .bb echo=false}):\nOnly the rendered HTML appears — no source code shown\nBabqua also recognizes an output= attribute that picks a renderer when the value isn’t tagged with Kindly metadata:\nWhen both :kindly/kind metadata on the value and output= on the fence are set, output= wins. The fence attribute is the more explicit, local signal — treating it as an override matches Quarto’s own pattern of per-block attributes taking precedence over document-level defaults.\nThis is also the escape hatch for inspecting a value that’s tagged for chart rendering: output=html shows the JSON spec; output=hidden suppresses the cell entirely.\nSee the Quarto documentation on code cells for more on the standard attributes.",
+    "text": "4.1 Where options can go\nThe previous chapter (Kindly kinds) covered how to control the rendering of a value. This chapter covers the knobs around .bb blocks — display attributes (echo, eval), Babqua’s renderer override (output=), per-block options (output suppression, sizing) — and finishes with the document-level Quarto features (math, callouts) that pair with live evaluation.\nBabqua reads block-level options from four places:\nFor options that accept more than one source, the highest-priority source wins, falling back to the built-in default. The per-option tables below note where each can go.",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Authoring Babqua documents</span>"
     ]
   },
   {
-    "objectID": "authoring.html#code-block-attributes",
-    "href": "authoring.html#code-block-attributes",
+    "objectID": "authoring.html#where-options-can-go",
+    "href": "authoring.html#where-options-can-go",
     "title": "4  Authoring Babqua documents",
     "section": "",
-    "text": "Attribute\nEffect\n\n\n\n\necho=false\nHide the source code, show only the result\n\n\neval=false\nShow code without evaluating it\n\n\n\n\n\n\n\n\nAttribute\nEffect\n\n\n\n\noutput=html\nRender the value as raw HTML\n\n\noutput=markdown\nParse the value as markdown\n\n\noutput=hidden\nSuppress both source and result",
+    "text": "Fence attribute — on the opening line of a code block, e.g. ```{.clojure .bb echo=false}.\n#| cell directive — Quarto’s #| key: value syntax at the top of the block. Babqua parses these and applies them as if they’d been written on the fence, then strips them from the source:\nDocument frontmatter — under a top-level babqua: key, for doc-wide defaults. Only some options support this.\n:kindly/options metadata — on the value, for layout options that library functions can attach via with-meta / vary-meta.",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Authoring Babqua documents</span>"
     ]
   },
   {
-    "objectID": "authoring.html#quarto-cell-directives",
-    "href": "authoring.html#quarto-cell-directives",
+    "objectID": "authoring.html#display-echo-eval",
+    "href": "authoring.html#display-echo-eval",
     "title": "4  Authoring Babqua documents",
-    "section": "4.2 Quarto cell directives",
-    "text": "4.2 Quarto cell directives\nQuarto’s #| key: value syntax also works at the top of a .bb block. Babqua parses the directives, applies them as if they’d been written on the fence, and strips them from the source before evaluation:",
+    "section": "4.2 Display: echo, eval",
+    "text": "4.2 Display: echo, eval\nQuarto-standard. Set via fence attribute or #| directive.\n\n\n\nAttribute\nEffect\n\n\n\n\necho=false\nHide the source code, show only the result\n\n\neval=false\nShow code without evaluating it\n\n\n\n\n\nOnly the rendered HTML appears — no source code shown\n\n\nSee the Quarto documentation on code cells for the full set of standard attributes.",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Authoring Babqua documents</span>"
     ]
   },
   {
-    "objectID": "authoring.html#per-block-options",
-    "href": "authoring.html#per-block-options",
+    "objectID": "authoring.html#renderer-override-output",
+    "href": "authoring.html#renderer-override-output",
     "title": "4  Authoring Babqua documents",
-    "section": "4.3 Per-block options",
-    "text": "4.3 Per-block options\nThese are Babqua-specific knobs.\n\n\n\n\n\n\n\n\n\nOption\nType\nDefault\nWhere to set it\n\n\n\n\nhide-stdout\nboolean\nfalse\nfence, frontmatter, #| directive\n\n\nwidth\ninteger (px)\nper chart kind\nfence, :kindly/options\n\n\nheight\ninteger (px)\nper chart kind\nfence, :kindly/options\n\n\n\nECharts and Cytoscape default to 600 × 400 pixels because their libraries refuse to render to a size-less container. Other chart kinds (Plotly, Vega-Lite, Highcharts) auto-fit and have no built-in pixel default.\nhide-stdout is an evaluation/runtime concern; width and height are layout concerns and Babqua also reads them from the value’s :kindly/options metadata.\nFor each option, the highest-priority source that sets it wins, falling back through the others to the built-in default.\n\n4.3.1 Fence attribute\nSet on the opening line of a code block:\n```{.clojure .bb hide-stdout=true}\n(do (println \"noisy debug\")\n    42)\n```\n```{.clojure .bb width=400 height=250}\n^:kind/plotly\n{:data [{:x [1 2 3 4 5] :y [4 1 5 3 2] :type \"bar\"}]\n :layout {:title \"Sized 400×250\"}}\n```\n\n\n4.3.2 Frontmatter (hide-stdout only)\nDoc-wide default for hide-stdout goes in the YAML header:\n---\nfilters:\n  - bb\nbabqua:\n  hide-stdout: true\n---\nwidth and height aren’t read from frontmatter — set them per block via the fence or via :kindly/options.\n\n\n4.3.3 :kindly/options (width and height only)\nAnnotate the value’s metadata under :kindly/options:\n\n^{:kindly/kind :kind/plotly\n  :kindly/options {:width 800 :height 500}}\n{:data [{:x [1 2 3] :y [10 20 15] :type \"bar\"}]\n :layout {:title \"Sized via :kindly/options\"}}\n\n\n\n\nLibrary functions can attach these via with-meta / vary-meta, so callers don’t need to set them at the call site.",
+    "section": "4.3 Renderer override: output=",
+    "text": "4.3 Renderer override: output=\noutput= picks a renderer when the value isn’t tagged with Kindly metadata.\n\n\n\nAttribute\nEffect\n\n\n\n\noutput=html\nRender the value as raw HTML\n\n\noutput=markdown\nParse the value as markdown\n\n\noutput=hidden\nSuppress both source and result\n\n\n\nWhen both :kindly/kind metadata on the value and output= on the fence are set, output= wins. The fence attribute is the more explicit, local signal — treating it as an override matches Quarto’s own pattern of per-block attributes taking precedence over document-level defaults.\nThis is also the escape hatch for inspecting a value that’s tagged for chart rendering: output=html shows the JSON spec; output=hidden suppresses the cell entirely.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Authoring Babqua documents</span>"
+    ]
+  },
+  {
+    "objectID": "authoring.html#babqua-knobs-hide-stdout-width-height",
+    "href": "authoring.html#babqua-knobs-hide-stdout-width-height",
+    "title": "4  Authoring Babqua documents",
+    "section": "4.4 Babqua knobs: hide-stdout, width, height",
+    "text": "4.4 Babqua knobs: hide-stdout, width, height\n\n\n\nOption\nType\nDefault\nWhere\n\n\n\n\nhide-stdout\nboolean\nfalse\nfence, #|, frontmatter\n\n\nwidth\ninteger (px)\nper chart kind\nfence, :kindly/options\n\n\nheight\ninteger (px)\nper chart kind\nfence, :kindly/options\n\n\n\nECharts and Cytoscape default to 600 × 400 pixels because their libraries refuse to render to a size-less container. Other chart kinds (Plotly, Vega-Lite, Highcharts) auto-fit and have no built-in pixel default.\nhide-stdout is an evaluation/runtime concern; width and height are layout concerns, which is why they additionally read from :kindly/options — library functions can attach sizing to a value without the caller having to set it.\nFence example:\n```{.clojure .bb hide-stdout=true}\n(do (println \"noisy debug\")\n    42)\n```\n```{.clojure .bb width=400 height=250}\n^:kind/plotly\n{:data [{:x [1 2 3 4 5] :y [4 1 5 3 2] :type \"bar\"}]\n :layout {:title \"Sized 400×250\"}}\n```\nFrontmatter default for hide-stdout:\n---\nfilters:\n  - bb\nbabqua:\n  hide-stdout: true\n---\n:kindly/options metadata for sizing:\n\n^{:kindly/kind :kind/plotly\n  :kindly/options {:width 800 :height 500}}\n{:data [{:x [1 2 3] :y [10 20 15] :type \"bar\"}]\n :layout {:title \"Sized via :kindly/options\"}}",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Authoring Babqua documents</span>"
     ]
@@ -413,8 +433,8 @@
     "objectID": "authoring.html#combining-with-other-filters",
     "href": "authoring.html#combining-with-other-filters",
     "title": "4  Authoring Babqua documents",
-    "section": "4.4 Combining with other filters",
-    "text": "4.4 Combining with other filters\nIf you list more than one filter in filters:, put bb first — Babqua needs the .bb class to still be on the block when it runs:\nfilters:\n  - bb\n  - some-other-filter",
+    "section": "4.5 Combining with other filters",
+    "text": "4.5 Combining with other filters\nIf you list more than one filter in filters:, put bb first — Babqua needs the .bb class to still be on the block when it runs:\nfilters:\n  - bb\n  - some-other-filter",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Authoring Babqua documents</span>"
     ]
@@ -423,8 +443,8 @@
     "objectID": "authoring.html#document-level-quarto-features",
     "href": "authoring.html#document-level-quarto-features",
     "title": "4  Authoring Babqua documents",
-    "section": "4.5 Document-level Quarto features",
-    "text": "4.5 Document-level Quarto features\nQuarto’s authoring features apply to a .qmd file the same way they would in any Quarto document — Babqua only intervenes for .bb code blocks. A few worth knowing:\n\n4.5.1 Math\nQuarto recognizes LaTeX math in prose: write $\\sqrt{x^2 + y^2}$ for inline math like \\(\\sqrt{x^2 + y^2}\\), or $$ ... $$ for a display equation:\n\\[\\int_0^\\infty e^{-x^2}\\,dx = \\frac{\\sqrt{\\pi}}{2}\\]\nThe same Quarto pipeline handles math returned from ^:kind/md — Babqua emits the markdown string into Pandoc’s AST and Quarto then processes the math:\n\n^:kind/md\n[\"The area of a circle is $A = \\\\pi r^2$.\"]\n\nThe area of a circle is \\(A = \\pi r^2\\).\n\n\n\n\n4.5.2 Other Quarto features\nCallouts, frontmatter (title, theme, format options), cross-references, and citations are all standard Quarto. See the Quarto authoring guide for the full set.",
+    "section": "4.6 Document-level Quarto features",
+    "text": "4.6 Document-level Quarto features\nQuarto’s authoring features apply to a .qmd file the same way they would in any Quarto document — Babqua only intervenes for .bb code blocks. A few worth knowing:\n\n4.6.1 Math\nQuarto recognizes LaTeX math in prose: write $\\sqrt{x^2 + y^2}$ for inline math like \\(\\sqrt{x^2 + y^2}\\), or $$ ... $$ for a display equation:\n\\[\\int_0^\\infty e^{-x^2}\\,dx = \\frac{\\sqrt{\\pi}}{2}\\]\nThe same Quarto pipeline handles math returned from ^:kind/md — Babqua emits the markdown string into Pandoc’s AST and Quarto then processes the math:\n\n^:kind/md\n[\"The area of a circle is $A = \\\\pi r^2$.\"]\n\nThe area of a circle is \\(A = \\pi r^2\\).\n\n\n\n\n4.6.2 Other Quarto features\nCallouts, frontmatter (title, theme, format options), cross-references, and citations are all standard Quarto. See the Quarto authoring guide for the full set.",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Authoring Babqua documents</span>"
     ]
@@ -434,7 +454,7 @@
     "href": "how-it-works.html",
     "title": "5  How It Works",
     "section": "",
-    "text": "5.1 Architecture overview\nThis chapter explains the internals of Babqua — how your {.clojure .bb} code blocks turn into rendered output.\nBabqua is a Pandoc Lua filter. When Quarto renders a .qmd file, it calls Pandoc under the hood. Pandoc reads the document, builds an abstract syntax tree (AST), and runs any filters specified in the frontmatter. The Babqua filter intercepts code blocks marked with the .bb class, evaluates them through a single Babashka process, and replaces them with the appropriate output.\nflowchart LR\n  qmd[.qmd file] --&gt; quarto[Quarto]\n  quarto --&gt; pandoc[Pandoc]\n  pandoc -- AST --&gt; lua[babqua.lua filter]\n  lua -- script --&gt; bb[bb runtime.bb]\n  bb -- JSON --&gt; lua\n  lua -- AST --&gt; pandoc\n  pandoc --&gt; out[HTML]\nWhere Janqua bootstraps helper functions over the wire and parses Clojure-printed output, Babqua leans on Babashka’s batteries — hiccup, cheshire, EDN are all built in. The Lua filter stays thin: the bb-side runtime detects the Kindly kind and pre-renders the value into HTML / JSON / markdown, and the filter just inserts the result.",
+    "text": "5.1 Architecture overview\nThis chapter explains the internals of Babqua — how your {.clojure .bb} code blocks turn into rendered output.\nBabqua is a Pandoc Lua filter. When Quarto renders a .qmd file, it calls Pandoc internally. Pandoc reads the document, builds an abstract syntax tree (AST), and runs any filters specified in the frontmatter. The Babqua filter intercepts code blocks marked with the .bb class, evaluates them through a single Babashka process, and replaces them with the appropriate output.\nflowchart LR\n  qmd[.qmd file] --&gt; quarto[Quarto]\n  quarto --&gt; pandoc[Pandoc]\n  pandoc -- AST --&gt; lua[babqua.lua filter]\n  lua -- script --&gt; bb[bb runtime.bb]\n  bb -- JSON --&gt; lua\n  lua -- AST --&gt; pandoc\n  pandoc --&gt; out[HTML]\nWhere Janqua bootstraps helper functions over the wire and parses Clojure-printed output, Babqua uses libraries Babashka bundles — hiccup, cheshire, and EDN are built in. The Lua filter stays thin: the bb-side runtime detects the Kindly kind and pre-renders the value into HTML / JSON / markdown, and the filter inserts the result.",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>How It Works</span>"
     ]
@@ -444,7 +464,7 @@
     "href": "how-it-works.html#three-filter-passes",
     "title": "5  How It Works",
     "section": "5.2 Three filter passes",
-    "text": "5.2 Three filter passes\nPandoc visits Meta after Block elements within a single filter pass, which is awkward for a workflow that needs to evaluate all blocks together before rendering any of them. Babqua splits the work into three passes:\n\nCollect — every .bb block’s source is recorded into a module-level list.\nEvaluate — a Pandoc function (which runs at the end of a pass) builds a single bb script that calls babqua.runtime/run-blocks on the collected sources, invokes bb, and stores the JSON response.\nReplace — a fresh CodeBlock traversal indexes back into the stored results, dispatches by :format, and substitutes the rendered AST. The same pass injects babqua.css into header-includes.",
+    "text": "5.2 Three filter passes\nA Pandoc Lua filter exposes handler functions named after AST node types — CodeBlock (one per fenced code block), Meta (the document’s frontmatter), and Pandoc (the whole document, called at the end of a pass). Within one pass, every CodeBlock is visited before the Pandoc handler runs, so a single-pass design can’t substitute a result into a CodeBlock — bb hasn’t been called yet. Babqua splits the work into three passes:\n\nCollect — every .bb block’s source is recorded into a module-level list.\nEvaluate — a Pandoc function (which runs at the end of a pass) builds a single bb script that calls babqua.runtime/run-blocks on the collected sources, invokes bb, and stores the JSON response.\nReplace — a fresh CodeBlock traversal indexes back into the stored results, dispatches by :format, and substitutes the rendered AST. The same pass injects babqua.css into header-includes.",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>How It Works</span>"
     ]
@@ -464,7 +484,7 @@
     "href": "how-it-works.html#two-invocation-paths",
     "title": "5  How It Works",
     "section": "5.4 Two invocation paths",
-    "text": "5.4 Two invocation paths\nThe runtime contract above is identical in both modes; only the delivery differs.\n\n5.4.1 One-shot\nThe default for quarto render. The filter writes the script to a temp file inside a per-render mode-0700 directory and runs bb &lt;script&gt; directly. A fresh bb starts, load-files the runtime, evaluates the blocks, prints the JSON response, and exits.\n\n\n5.4.2 Persistent\nWhen babqua-lifecycle.bb start has spawned a long-lived bb nrepl-server (an nREPL server, the standard Clojure remote-REPL protocol) and written .babqua-pid and .babqua-nrepl-port to the project root, the filter detects them and pipes the same script through babqua-nrepl-client.bb &lt;port&gt; instead.\nThe client sends one eval op over bencode (nREPL’s wire format), relays the response’s :out chunks to its stdout, and exits. The runtime’s (println …) becomes nREPL :out; downstream JSON-extraction is unchanged.\nState accumulates across renders because the bb process keeps its user namespace warm. babqua: { reset-on-render: true } in frontmatter opts out per document — the filter stops the running session before that render and falls back to one-shot.",
+    "text": "5.4 Two invocation paths\nThe runtime contract above is identical in both modes; only the delivery differs. The filter picks one-shot when no persistent nREPL session is running, and persistent when there is — both quarto render and quarto preview follow the same rule.\n\n5.4.1 One-shot\nThe default. The filter writes the script to a temp file inside a per-render mode-0700 directory and runs bb &lt;script&gt; directly. A fresh bb starts, load-files the runtime, evaluates the blocks, prints the JSON response, and exits.\n\n\n5.4.2 Persistent\nWhen babqua-lifecycle.bb start has spawned a long-lived bb nrepl-server (an nREPL server, the standard Clojure remote-REPL protocol) and written .babqua-pid and .babqua-nrepl-port to the project root, the filter detects them and pipes the same script through babqua-nrepl-client.bb &lt;port&gt; instead.\nThe client sends one eval op over bencode (nREPL’s wire format), relays the response’s :out chunks to its stdout, and exits. The runtime’s (println …) becomes nREPL :out; downstream JSON-extraction is unchanged.\nState accumulates across renders because the bb process keeps its user namespace warm. babqua: { reset-on-render: true } in frontmatter opts out per document — the filter stops the running session before that render and falls back to one-shot.",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>How It Works</span>"
     ]
@@ -504,7 +524,7 @@
     "href": "how-it-works.html#what-stays-in-lua-what-moves-to-bb",
     "title": "5  How It Works",
     "section": "5.8 What stays in Lua, what moves to bb",
-    "text": "5.8 What stays in Lua, what moves to bb\n\n\n\nConcern\nLua filter\nbb runtime\n\n\n\n\nAST manipulation\nyes\n—\n\n\nProject root resolution\nyes\n—\n\n\nbb script generation\nyes\n—\n\n\nJSON decoding (response)\nyes\n—\n\n\nCDN scripts and SRI\nyes\n—\n\n\nChart wrapper / div ids\nyes\n—\n\n\nHiccup → HTML\n—\nyes\n\n\nValue → JSON (chart spec)\n—\nyes\n\n\nKind detection\n—\nyes\n\n\nKind-to-format dispatch\n—\nyes\n\n\nStdout capture\n—\nyes\n\n\n\nThis division means Lua is the wrong place for data-shape decisions when the host language has a great library for them — and Babashka does. Adding a new kind that doesn’t need new CDN scripts is a runtime-only change.",
+    "text": "5.8 What stays in Lua, what moves to bb\n\n\n\nConcern\nLua filter\nbb runtime\n\n\n\n\nAST manipulation\nyes\n—\n\n\nProject root resolution\nyes\n—\n\n\nbb script generation\nyes\n—\n\n\nJSON decoding (response)\nyes\n—\n\n\nCDN scripts and SRI\nyes\n—\n\n\nChart wrapper / div ids\nyes\n—\n\n\nHiccup → HTML\n—\nyes\n\n\nValue → JSON (chart spec)\n—\nyes\n\n\nKind detection\n—\nyes\n\n\nKind-to-format dispatch\n—\nyes\n\n\nStdout capture\n—\nyes\n\n\n\nThis division puts data-shape decisions in the host language, where Babashka’s bundled libraries handle them. Adding a new kind that doesn’t need new CDN scripts is a runtime-only change.",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>How It Works</span>"
     ]
@@ -534,7 +554,7 @@
     "href": "demo.html#open-data-vega-lite",
     "title": "6  Demo",
     "section": "6.3 Open data + Vega-Lite",
-    "text": "6.3 Open data + Vega-Lite\nBabashka ships an HTTP client. Fetch some data and chart it without ever leaving the notebook.\n\n(require '[babashka.http-client :as http]\n         '[cheshire.core :as json])\n\nnil\n\n\n\n(def quakes\n  (-&gt; (http/get \"https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson\")\n      :body\n      (json/parse-string true)\n      :features\n      (-&gt;&gt; (map (fn [f]\n                  {:place (-&gt; f :properties :place)\n                   :mag   (-&gt; f :properties :mag)\n                   :time  (-&gt; f :properties :time)})))))\n\n\n(count quakes)\n\n29\n\n\n\n^:kind/vega-lite\n{:data {:values quakes}\n :mark {:type \"bar\" :tooltip true}\n :title \"USGS earthquakes M≥2.5 (last 24h) — magnitude distribution\"\n :encoding {:x {:field :mag :bin true :title \"Magnitude\"}\n            :y {:aggregate :count :title \"Count\"}}}\n\n\n\n\nThe whole pipeline — HTTP, JSON, transform, chart spec, render — happens inside quarto render.",
+    "text": "6.3 Open data + Vega-Lite\nBabashka ships an HTTP client. Fetch some data and chart it without ever leaving the notebook.\n\n(require '[babashka.http-client :as http]\n         '[cheshire.core :as json])\n\nnil\n\n\n\n(def quakes\n  (-&gt; (http/get \"https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson\")\n      :body\n      (json/parse-string true)\n      :features\n      (-&gt;&gt; (map (fn [f]\n                  {:place (-&gt; f :properties :place)\n                   :mag   (-&gt; f :properties :mag)\n                   :time  (-&gt; f :properties :time)})))))\n\n\n(count quakes)\n\n35\n\n\n\n^:kind/vega-lite\n{:data {:values quakes}\n :mark {:type \"bar\" :tooltip true}\n :title \"USGS earthquakes M≥2.5 (last 24h) — magnitude distribution\"\n :encoding {:x {:field :mag :bin true :title \"Magnitude\"}\n            :y {:aggregate :count :title \"Count\"}}}\n\n\n\n\nThe whole pipeline — HTTP, JSON, transform, chart spec, render — happens inside quarto render.",
     "crumbs": [
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Demo</span>"
     ]
@@ -604,7 +624,7 @@
     "href": "demo.html#annotating-in-library-functions",
     "title": "6  Demo",
     "section": "6.10 Annotating in library functions",
-    "text": "6.10 Annotating in library functions\nMetadata doesn’t have to be in the code block — functions can attach it to their return values with with-meta. Define a bar-chart function that produces a Plotly chart and tags it as :kind/plotly:\n\n^:kind/hidden\n[(defn bar-chart [labels values]\n   (with-meta\n     {:data [{:x labels :y values :type \"bar\"}]\n      :layout {:title \"Bar Chart\"}}\n     {:kindly/kind :kind/plotly}))]\n\nNow just call the function — no annotation needed at the call site:\n\n(bar-chart [\"apples\" \"bananas\" \"cherries\"] [12 19 7])",
+    "text": "6.10 Annotating in library functions\nMetadata doesn’t have to be in the code block — functions can attach it to their return values with with-meta. Define a bar-chart function that produces a Plotly chart and tags it as :kind/plotly:\n\n^:kind/hidden\n[(defn bar-chart [labels values]\n   (with-meta\n     {:data [{:x labels :y values :type \"bar\"}]\n      :layout {:title \"Bar Chart\"}}\n     {:kindly/kind :kind/plotly}))]\n\nNow call the function — no annotation needed at the call site:\n\n(bar-chart [\"apples\" \"bananas\" \"cherries\"] [12 19 7])",
     "crumbs": [
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Demo</span>"
     ]
@@ -635,16 +655,6 @@
     "title": "7  Contributing",
     "section": "7.2 Local setup",
     "text": "7.2 Local setup\ngit clone https://github.com/scicloj/babqua\ncd babqua/docs\nquarto render\nThe symlinks are committed, so there’s no setup script. A clean render produces docs/_book/ with one HTML file per chapter.\nFor live iteration as you edit:\ncd docs && quarto preview\nQuarto serves the book at a local URL and re-renders each chapter you save. For chapters with heavy bb.edn deps or pods, the optional persistent bb session described in Workflow keeps state warm across saves.\nOr render a single chapter directly for the fastest one-shot feedback:\ncd docs && quarto render demo.qmd\ndemo.qmd exercises every Kindly kind plus stdout, errors, and a live HTTP fetch in a single file.",
-    "crumbs": [
-      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Contributing</span>"
-    ]
-  },
-  {
-    "objectID": "contributing.html#releases",
-    "href": "contributing.html#releases",
-    "title": "7  Contributing",
-    "section": "7.3 Releases",
-    "text": "7.3 Releases\nTags are cut from main. The version-bump goes in its own commit, separate from any pre-release fixes.",
     "crumbs": [
       "<span class='chapter-number'>7</span>  <span class='chapter-title'>Contributing</span>"
     ]

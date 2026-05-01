@@ -214,7 +214,7 @@ ul.task-list li input[type="checkbox"] {
 <p>This chapter explains the internals of Babqua — how your <code>{.clojure .bb}</code> code blocks turn into rendered output.</p>
 <section id="architecture-overview" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="architecture-overview"><span class="header-section-number">5.1</span> Architecture overview</h2>
-<p>Babqua is a <a href="https://pandoc.org/lua-filters.html">Pandoc Lua filter</a>. When Quarto renders a <code>.qmd</code> file, it calls <a href="https://pandoc.org/">Pandoc</a> under the hood. Pandoc reads the document, builds an abstract syntax tree (AST), and runs any filters specified in the frontmatter. The Babqua filter intercepts code blocks marked with the <code>.bb</code> class, evaluates them through a single Babashka process, and replaces them with the appropriate output.</p>
+<p>Babqua is a <a href="https://pandoc.org/lua-filters.html">Pandoc Lua filter</a>. When Quarto renders a <code>.qmd</code> file, it calls <a href="https://pandoc.org/">Pandoc</a> internally. Pandoc reads the document, builds an abstract syntax tree (AST), and runs any filters specified in the frontmatter. The Babqua filter intercepts code blocks marked with the <code>.bb</code> class, evaluates them through a single Babashka process, and replaces them with the appropriate output.</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
@@ -234,11 +234,11 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </div>
-<p>Where Janqua bootstraps helper functions over the wire and parses Clojure-printed output, Babqua leans on Babashka’s batteries — hiccup, cheshire, EDN are all built in. The Lua filter stays thin: the bb-side runtime detects the Kindly kind and pre-renders the value into HTML / JSON / markdown, and the filter just inserts the result.</p>
+<p>Where Janqua bootstraps helper functions over the wire and parses Clojure-printed output, Babqua uses libraries Babashka bundles — hiccup, cheshire, and EDN are built in. The Lua filter stays thin: the bb-side runtime detects the Kindly kind and pre-renders the value into HTML / JSON / markdown, and the filter inserts the result.</p>
 </section>
 <section id="three-filter-passes" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="three-filter-passes"><span class="header-section-number">5.2</span> Three filter passes</h2>
-<p>Pandoc visits Meta after Block elements within a single filter pass, which is awkward for a workflow that needs to evaluate all blocks together before rendering any of them. Babqua splits the work into three passes:</p>
+<p>A Pandoc Lua filter exposes handler functions named after AST node types — <code>CodeBlock</code> (one per fenced code block), <code>Meta</code> (the document’s frontmatter), and <code>Pandoc</code> (the whole document, called at the end of a pass). Within one pass, every <code>CodeBlock</code> is visited <em>before</em> the <code>Pandoc</code> handler runs, so a single-pass design can’t substitute a result into a <code>CodeBlock</code> — bb hasn’t been called yet. Babqua splits the work into three passes:</p>
 <ol type="1">
 <li><strong>Collect</strong> — every <code>.bb</code> block’s source is recorded into a module-level list.</li>
 <li><strong>Evaluate</strong> — a <code>Pandoc</code> function (which runs at the end of a pass) builds a single bb script that calls <code>babqua.runtime/run-blocks</code> on the collected sources, invokes <code>bb</code>, and stores the JSON response.</li>
@@ -266,10 +266,10 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="two-invocation-paths" class="level2" data-number="5.4">
 <h2 data-number="5.4" class="anchored" data-anchor-id="two-invocation-paths"><span class="header-section-number">5.4</span> Two invocation paths</h2>
-<p>The runtime contract above is identical in both modes; only the delivery differs.</p>
+<p>The runtime contract above is identical in both modes; only the delivery differs. The filter picks one-shot when no persistent nREPL session is running, and persistent when there is — both <code>quarto render</code> and <code>quarto preview</code> follow the same rule.</p>
 <section id="one-shot" class="level3" data-number="5.4.1">
 <h3 data-number="5.4.1" class="anchored" data-anchor-id="one-shot"><span class="header-section-number">5.4.1</span> One-shot</h3>
-<p>The default for <code>quarto render</code>. The filter writes the script to a temp file inside a per-render mode-0700 directory and runs <code>bb &lt;script&gt;</code> directly. A fresh bb starts, <code>load-file</code>s the runtime, evaluates the blocks, prints the JSON response, and exits.</p>
+<p>The default. The filter writes the script to a temp file inside a per-render mode-0700 directory and runs <code>bb &lt;script&gt;</code> directly. A fresh bb starts, <code>load-file</code>s the runtime, evaluates the blocks, prints the JSON response, and exits.</p>
 </section>
 <section id="persistent" class="level3" data-number="5.4.2">
 <h3 data-number="5.4.2" class="anchored" data-anchor-id="persistent"><span class="header-section-number">5.4.2</span> Persistent</h3>
@@ -361,7 +361,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
-<p>This division means Lua is the wrong place for data-shape decisions when the host language has a great library for them — and Babashka does. Adding a new kind that doesn’t need new CDN scripts is a runtime-only change.</p>
+<p>This division puts data-shape decisions in the host language, where Babashka’s bundled libraries handle them. Adding a new kind that doesn’t need new CDN scripts is a runtime-only change.</p>
 
 
 </section>
