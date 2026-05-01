@@ -551,12 +551,11 @@ window.Quarto = {
 <h2 data-number="6.10" class="anchored" data-anchor-id="annotating-in-library-functions"><span class="header-section-number">6.10</span> Annotating in library functions</h2>
 <p>Metadata doesn’t have to be in the code block — functions can attach it to their return values with <code>with-meta</code>. Define a <code>bar-chart</code> function that produces a Plotly chart and tags it as <code>:kind/plotly</code>:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>^<span class="at">:kind/hidden</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>[(<span class="bu">defn</span><span class="fu"> bar-chart </span>[labels values]</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>   (<span class="kw">with-meta</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>     {<span class="at">:data</span> [{<span class="at">:x</span> labels <span class="at">:y</span> values <span class="at">:type</span> <span class="st">"bar"</span>}]</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">:layout</span> {<span class="at">:title</span> <span class="st">"Bar Chart"</span>}}</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>     {<span class="at">:kindly/kind</span> <span class="at">:kind/plotly</span>}))]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn</span><span class="fu"> bar-chart </span>[labels values]</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">with-meta</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    {<span class="at">:data</span> [{<span class="at">:x</span> labels <span class="at">:y</span> values <span class="at">:type</span> <span class="st">"bar"</span>}]</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">:layout</span> {<span class="at">:title</span> <span class="st">"Bar Chart"</span>}}</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    {<span class="at">:kindly/kind</span> <span class="at">:kind/plotly</span>}))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Now call the function — no annotation needed at the call site:</p>
 <div class="cell">

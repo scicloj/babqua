@@ -624,7 +624,7 @@
     "href": "demo.html#annotating-in-library-functions",
     "title": "6  Demo",
     "section": "6.10 Annotating in library functions",
-    "text": "6.10 Annotating in library functions\nMetadata doesn’t have to be in the code block — functions can attach it to their return values with with-meta. Define a bar-chart function that produces a Plotly chart and tags it as :kind/plotly:\n\n^:kind/hidden\n[(defn bar-chart [labels values]\n   (with-meta\n     {:data [{:x labels :y values :type \"bar\"}]\n      :layout {:title \"Bar Chart\"}}\n     {:kindly/kind :kind/plotly}))]\n\nNow call the function — no annotation needed at the call site:\n\n(bar-chart [\"apples\" \"bananas\" \"cherries\"] [12 19 7])",
+    "text": "6.10 Annotating in library functions\nMetadata doesn’t have to be in the code block — functions can attach it to their return values with with-meta. Define a bar-chart function that produces a Plotly chart and tags it as :kind/plotly:\n\n(defn bar-chart [labels values]\n  (with-meta\n    {:data [{:x labels :y values :type \"bar\"}]\n     :layout {:title \"Bar Chart\"}}\n    {:kindly/kind :kind/plotly}))\n\nNow call the function — no annotation needed at the call site:\n\n(bar-chart [\"apples\" \"bananas\" \"cherries\"] [12 19 7])",
     "crumbs": [
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Demo</span>"
     ]
