@@ -194,7 +194,17 @@
     "href": "workflow.html#preview-mode",
     "title": "2  Workflow",
     "section": "2.2 Preview mode",
-    "text": "2.2 Preview mode\nquarto preview re-renders on every save. By default, each save spawns a fresh bb process. For documents that load heavy pods or do expensive setup, you can opt into a persistent bb session that keeps state warm across saves:\n# Start once per session (typically before `quarto preview`)\nbb _extensions/scicloj/bb/babqua-lifecycle.bb start\n\n# Now run preview as normal — the filter detects the live REPL and\n# routes evaluations through it.\nquarto preview hello.qmd\n\n# When you're done, tear it down.\nbb _extensions/scicloj/bb/babqua-lifecycle.bb stop\nWhile the persistent session is running, defs and requires carry across renders the way they would in any Clojure REPL — removing (def x 42) from a block doesn’t unbind x until you reset.\nThat’s the standard Clojure-ecosystem feel; if you’d rather have a fresh process per save, add this to your document’s frontmatter:\nbabqua:\n  reset-on-render: true\nBabqua then stops the running session before the render begins, this render runs as one-shot, and the persistent session stays down until you start it again.\nA running session creates three state files in your project root: .babqua-pid and .babqua-nrepl-port (removed by stop), and .babqua-bb.log (the captured bb stdout/stderr — kept for post-mortem inspection, truncated on each start). Add all three to your .gitignore if they aren’t already covered.",
+    "text": "2.2 Preview mode\nquarto preview hello.qmd\nQuarto opens the rendered page in a browser and re-renders on every save. Each save spawns a fresh bb process — the same one-shot behavior as quarto render, just triggered automatically as you write.\nFor most documents, that’s all you need. If your document loads heavy pods or does expensive setup you’d rather not pay for on every save, the next section covers an optional persistent session.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Workflow</span>"
+    ]
+  },
+  {
+    "objectID": "workflow.html#persistent-bb-session-optional",
+    "href": "workflow.html#persistent-bb-session-optional",
+    "title": "2  Workflow",
+    "section": "2.3 Persistent bb session (optional)",
+    "text": "2.3 Persistent bb session (optional)\nFor warm state across saves, start a long-lived bb session before running preview:\n# Start once per session (typically before `quarto preview`)\nbb _extensions/scicloj/bb/babqua-lifecycle.bb start\n\n# Now run preview as normal — the filter detects the live REPL and\n# routes evaluations through it.\nquarto preview hello.qmd\n\n# When you're done, tear it down.\nbb _extensions/scicloj/bb/babqua-lifecycle.bb stop\nWhile the persistent session is running, defs and requires carry across renders the way they would in any Clojure REPL — removing (def x 42) from a block doesn’t unbind x until you reset.\nThat’s the standard Clojure-ecosystem feel; if you’d rather have a fresh process per save (one-shot semantics, even with the session running), add this to your document’s frontmatter:\nbabqua:\n  reset-on-render: true\nBabqua then stops the running session before the render begins, this render runs as one-shot, and the persistent session stays down until you start it again.\nA running session creates three state files in your project root: .babqua-pid and .babqua-nrepl-port (removed by stop), and .babqua-bb.log (the captured bb stdout/stderr — kept for post-mortem inspection, truncated on each start). Add all three to your .gitignore if they aren’t already covered.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Workflow</span>"
     ]
@@ -203,8 +213,8 @@
     "objectID": "workflow.html#publishing-to-github-pages",
     "href": "workflow.html#publishing-to-github-pages",
     "title": "2  Workflow",
-    "section": "2.3 Publishing to GitHub Pages",
-    "text": "2.3 Publishing to GitHub Pages\nIf your project is a Quarto book or website, you can publish it to GitHub Pages directly from your project directory:\nquarto publish gh-pages\nThis renders the project and pushes the output to the gh-pages branch. GitHub Pages then serves it as a website. On first use, Quarto will create the branch and configure it for you.\nSee the Quarto publishing guide for more options, including custom domains and GitHub Actions automation.",
+    "section": "2.4 Publishing to GitHub Pages",
+    "text": "2.4 Publishing to GitHub Pages\nIf your project is a Quarto book or website, you can publish it to GitHub Pages directly from your project directory:\nquarto publish gh-pages\nThis renders the project and pushes the output to the gh-pages branch. GitHub Pages then serves it as a website. On first use, Quarto will create the branch and configure it for you.\nSee the Quarto publishing guide for more options, including custom domains and GitHub Actions automation.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Workflow</span>"
     ]
@@ -554,7 +564,7 @@
     "href": "demo.html#open-data-vega-lite",
     "title": "6  Demo",
     "section": "6.3 Open data + Vega-Lite",
-    "text": "6.3 Open data + Vega-Lite\nBabashka ships an HTTP client. Fetch some data and chart it without ever leaving the notebook.\n\n(require '[babashka.http-client :as http]\n         '[cheshire.core :as json])\n\nnil\n\n\n\n(def quakes\n  (-&gt; (http/get \"https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson\")\n      :body\n      (json/parse-string true)\n      :features\n      (-&gt;&gt; (map (fn [f]\n                  {:place (-&gt; f :properties :place)\n                   :mag   (-&gt; f :properties :mag)\n                   :time  (-&gt; f :properties :time)})))))\n\n\n(count quakes)\n\n35\n\n\n\n^:kind/vega-lite\n{:data {:values quakes}\n :mark {:type \"bar\" :tooltip true}\n :title \"USGS earthquakes M≥2.5 (last 24h) — magnitude distribution\"\n :encoding {:x {:field :mag :bin true :title \"Magnitude\"}\n            :y {:aggregate :count :title \"Count\"}}}\n\n\n\n\nThe whole pipeline — HTTP, JSON, transform, chart spec, render — happens inside quarto render.",
+    "text": "6.3 Open data + Vega-Lite\nBabashka ships an HTTP client. Fetch some data and chart it without ever leaving the notebook.\n\n(require '[babashka.http-client :as http]\n         '[cheshire.core :as json])\n\nnil\n\n\n\n(def quakes\n  (-&gt; (http/get \"https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson\")\n      :body\n      (json/parse-string true)\n      :features\n      (-&gt;&gt; (map (fn [f]\n                  {:place (-&gt; f :properties :place)\n                   :mag   (-&gt; f :properties :mag)\n                   :time  (-&gt; f :properties :time)})))))\n\n\n(count quakes)\n\n36\n\n\n\n^:kind/vega-lite\n{:data {:values quakes}\n :mark {:type \"bar\" :tooltip true}\n :title \"USGS earthquakes M≥2.5 (last 24h) — magnitude distribution\"\n :encoding {:x {:field :mag :bin true :title \"Magnitude\"}\n            :y {:aggregate :count :title \"Count\"}}}\n\n\n\n\nThe whole pipeline — HTTP, JSON, transform, chart spec, render — happens inside quarto render.",
     "crumbs": [
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Demo</span>"
     ]

@@ -208,7 +208,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#rendering" id="toc-rendering" class="nav-link active" data-scroll-target="#rendering"><span class="header-section-number">2.1</span> Rendering</a></li>
   <li><a href="#preview-mode" id="toc-preview-mode" class="nav-link" data-scroll-target="#preview-mode"><span class="header-section-number">2.2</span> Preview mode</a></li>
-  <li><a href="#publishing-to-github-pages" id="toc-publishing-to-github-pages" class="nav-link" data-scroll-target="#publishing-to-github-pages"><span class="header-section-number">2.3</span> Publishing to GitHub Pages</a></li>
+  <li><a href="#persistent-bb-session-optional" id="toc-persistent-bb-session-optional" class="nav-link" data-scroll-target="#persistent-bb-session-optional"><span class="header-section-number">2.3</span> Persistent bb session (optional)</a></li>
+  <li><a href="#publishing-to-github-pages" id="toc-publishing-to-github-pages" class="nav-link" data-scroll-target="#publishing-to-github-pages"><span class="header-section-number">2.4</span> Publishing to GitHub Pages</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/scicloj/babqua/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -243,27 +244,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="preview-mode" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="preview-mode"><span class="header-section-number">2.2</span> Preview mode</h2>
-<p><code>quarto preview</code> re-renders on every save. By default, each save spawns a fresh bb process. For documents that load heavy pods or do expensive setup, you can opt into a persistent bb session that keeps state warm across saves:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Start once per session (typically before `quarto preview`)</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">bb</span> _extensions/scicloj/bb/babqua-lifecycle.bb start</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Now run preview as normal — the filter detects the live REPL and</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># routes evaluations through it.</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> preview hello.qmd</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># When you're done, tear it down.</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ex">bb</span> _extensions/scicloj/bb/babqua-lifecycle.bb stop</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> preview hello.qmd</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Quarto opens the rendered page in a browser and re-renders on every save. Each save spawns a fresh bb process — the same one-shot behavior as <code>quarto render</code>, just triggered automatically as you write.</p>
+<p>For most documents, that’s all you need. If your document loads heavy pods or does expensive setup you’d rather not pay for on every save, the next section covers an optional persistent session.</p>
+</section>
+<section id="persistent-bb-session-optional" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="persistent-bb-session-optional"><span class="header-section-number">2.3</span> Persistent bb session (optional)</h2>
+<p>For warm state across saves, start a long-lived bb session before running preview:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Start once per session (typically before `quarto preview`)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">bb</span> _extensions/scicloj/bb/babqua-lifecycle.bb start</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Now run preview as normal — the filter detects the live REPL and</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># routes evaluations through it.</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> preview hello.qmd</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># When you're done, tear it down.</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="ex">bb</span> _extensions/scicloj/bb/babqua-lifecycle.bb stop</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>While the persistent session is running, <code>def</code>s and <code>require</code>s carry across renders the way they would in any Clojure REPL — removing <code>(def x 42)</code> from a block doesn’t unbind <code>x</code> until you reset.</p>
-<p>That’s the standard Clojure-ecosystem feel; if you’d rather have a fresh process per save, add this to your document’s frontmatter:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">babqua</span><span class="kw">:</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">reset-on-render</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>That’s the standard Clojure-ecosystem feel; if you’d rather have a fresh process per save (one-shot semantics, even with the session running), add this to your document’s frontmatter:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">babqua</span><span class="kw">:</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">reset-on-render</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Babqua then stops the running session before the render begins, this render runs as one-shot, and the persistent session stays down until you <code>start</code> it again.</p>
 <p>A running session creates three state files in your project root: <code>.babqua-pid</code> and <code>.babqua-nrepl-port</code> (removed by <code>stop</code>), and <code>.babqua-bb.log</code> (the captured bb stdout/stderr — kept for post-mortem inspection, truncated on each <code>start</code>). Add all three to your <code>.gitignore</code> if they aren’t already covered.</p>
 </section>
-<section id="publishing-to-github-pages" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="publishing-to-github-pages"><span class="header-section-number">2.3</span> Publishing to GitHub Pages</h2>
+<section id="publishing-to-github-pages" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="publishing-to-github-pages"><span class="header-section-number">2.4</span> Publishing to GitHub Pages</h2>
 <p>If your project is a Quarto book or website, you can publish it to <a href="https://pages.github.com/">GitHub Pages</a> directly from your project directory:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> publish gh-pages</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> publish gh-pages</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This renders the project and pushes the output to the <code>gh-pages</code> branch. GitHub Pages then serves it as a website. On first use, Quarto will create the branch and configure it for you.</p>
 <p>See the <a href="https://quarto.org/docs/publishing/github-pages.html">Quarto publishing guide</a> for more options, including custom domains and GitHub Actions automation.</p>
 
