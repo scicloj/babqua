@@ -207,9 +207,10 @@ The map is passed straight to `Highcharts.chart`:
  :series [{:name "Counts" :data [10 20 15 25]}]}
 ```
 
-## `^:kind/table` — HTML tables
+## `^:kind/table` — tables
 
-Renders tabular data as an HTML table. Two value shapes are accepted:
+Renders tabular data as a markdown pipe table, so Quarto's native
+table styling applies. Two value shapes are accepted:
 
 A sequence of maps (header derived from union of keys):
 
@@ -317,5 +318,5 @@ Babqua automatically unwraps the vector for all string-valued kinds
 | `^:kind/echarts` | map | [ECharts](https://echarts.apache.org/) chart |
 | `^:kind/cytoscape` | map | [Cytoscape](https://js.cytoscape.org/) graph |
 | `^:kind/highcharts` | map | [Highcharts](https://www.highcharts.com/) chart |
-| `^:kind/table` | map or seq-of-maps | HTML table |
+| `^:kind/table` | map or seq-of-maps | table (markdown pipe table) |
 | _(none)_ | any | code output |

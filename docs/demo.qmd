@@ -143,9 +143,10 @@ Use `^:kind/plotly` with a map containing `:data` and `:layout` keys:
 See [Per-block options](authoring.qmd#per-block-options) for the full
 set and precedence rules.
 
-## HTML table
+## Tables
 
-`:kind/table` renders tabular data on the Babashka side:
+`:kind/table` renders tabular data as a markdown pipe table, so
+Quarto's native table styling applies:
 
 ```{.clojure .bb}
 ^:kind/table

@@ -67,10 +67,11 @@ the bb process at the start of every render. It defines:
   collected sources and returns a vector of result maps.
 
 The pre-rendering helpers are dialect-native: `hiccup2.core/html` for
-hiccup, `cheshire.core/generate-string` for chart JSON, an inline
-hiccup-based table renderer for `:kind/table`, plain string
-passthrough for `kind/html` / `kind/md` / `kind/mermaid` /
-`kind/graphviz` / `kind/tex` / `kind/code`. Each result carries:
+hiccup, `cheshire.core/generate-string` for chart JSON, a pipe-table
+markdown renderer for `:kind/table` (so Quarto's native table styling
+applies), plain string passthrough for `kind/html` / `kind/md` /
+`kind/mermaid` / `kind/graphviz` / `kind/tex` / `kind/code`. Each
+result carries:
 
 - `:kind` — the original Kindly kind keyword (string-encoded), or nil
 - `:format` — a directive the Lua filter dispatches on:
