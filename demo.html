@@ -258,7 +258,7 @@ window.Quarto = {
   <li><a href="#hiccup" id="toc-hiccup" class="nav-link" data-scroll-target="#hiccup"><span class="header-section-number">6.4</span> Hiccup</a></li>
   <li><a href="#html" id="toc-html" class="nav-link" data-scroll-target="#html"><span class="header-section-number">6.5</span> HTML</a></li>
   <li><a href="#plotly-chart" id="toc-plotly-chart" class="nav-link" data-scroll-target="#plotly-chart"><span class="header-section-number">6.6</span> Plotly chart</a></li>
-  <li><a href="#html-table" id="toc-html-table" class="nav-link" data-scroll-target="#html-table"><span class="header-section-number">6.7</span> HTML table</a></li>
+  <li><a href="#tables" id="toc-tables" class="nav-link" data-scroll-target="#tables"><span class="header-section-number">6.7</span> Tables</a></li>
   <li><a href="#markdown-table-computed" id="toc-markdown-table-computed" class="nav-link" data-scroll-target="#markdown-table-computed"><span class="header-section-number">6.8</span> Markdown table (computed)</a></li>
   <li><a href="#latex-math" id="toc-latex-math" class="nav-link" data-scroll-target="#latex-math"><span class="header-section-number">6.9</span> LaTeX math</a></li>
   <li><a href="#annotating-in-library-functions" id="toc-annotating-in-library-functions" class="nav-link" data-scroll-target="#annotating-in-library-functions"><span class="header-section-number">6.10</span> Annotating in library functions</a></li>
@@ -358,7 +358,7 @@ window.Quarto = {
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">count</span> quakes)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="dv">36</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="dv">37</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div class="cell">
@@ -369,7 +369,7 @@ window.Quarto = {
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a> <span class="at">:encoding</span> {<span class="at">:x</span> {<span class="at">:field</span> <span class="at">:mag</span> <span class="at">:bin</span> <span class="va">true</span> <span class="at">:title</span> <span class="st">"Magnitude"</span>}</span>
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">:y</span> {<span class="at">:aggregate</span> <span class="at">:count</span> <span class="at">:title</span> <span class="st">"Count"</span>}}}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
-<div id="babqua-plot-1"></div><script src="https://cdn.jsdelivr.net/npm/vega@5.33.1" integrity="sha384-NMXhl2TbCXxcN7o4ROC56Funm78m4AylL8gMg/7Kn4YU+wrm23K9l7cY8lDRXQ9d" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/vega-lite@5.23.0" integrity="sha384-D9LYH0esGjcxQJsBuxOuXtCDJGXRWW1+KhluzWPqi0rLJmiR/ygPChefaD+rFFDQ" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/vega-embed@6.29.0" integrity="sha384-M+Ax7e/WFJpxSOF09HzI+Sj4wg9ottVd/uxmV2ItGGh02fLH28t2FAOJx3TJBap5" crossorigin="anonymous"></script><script>vegaEmbed("#babqua-plot-1", {"data":{"values":[{"place":"35 km ENE of Ensenada, B.C., MX","mag":2.62,"time":1777652182100},{"place":"0 km NW of Mayagüez, Puerto Rico","mag":3.2,"time":1777651076285},{"place":"68 km N of Hatillo, Puerto Rico","mag":3.16,"time":1777647421130},{"place":"24 km NE of Ute Park, New Mexico","mag":2.9,"time":1777642563502},{"place":"75 km ENE of Hasaki, Japan","mag":4.9,"time":1777640441206},{"place":"29 km ENE of Yilan, Taiwan","mag":5.8,"time":1777639195578},{"place":"20 km ESE of Silver Springs, Nevada","mag":2.6,"time":1777636122873},{"place":"107 km SSE of Sand Point, Alaska","mag":2.6,"time":1777635006599},{"place":"South Sandwich Islands region","mag":5.1,"time":1777633479548},{"place":"18 km SE of Silver Springs, Nevada","mag":2.65,"time":1777631710842},{"place":"18 km ESE of Silver Springs, Nevada","mag":2.54,"time":1777631572440},{"place":"14 km ESE of Ransiki, Indonesia","mag":4.9,"time":1777627464221},{"place":"17 km SE of Silver Springs, Nevada","mag":2.59,"time":1777623750929},{"place":"19 km SE of Silver Springs, Nevada","mag":5.17,"time":1777623439870},{"place":"20 km SE of Silver Springs, Nevada","mag":4.28,"time":1777623355842},{"place":"54 km NW of Elfin Cove, Alaska","mag":3.1,"time":1777623038378},{"place":"14 km ESE of Pāhala, Hawaii","mag":2.46,"time":1777620022250},{"place":"10 km SSE of Guánica, Puerto Rico","mag":3.24,"time":1777619946700},{"place":"12 km SSE of Guánica, Puerto Rico","mag":3.43,"time":1777613040470},{"place":"48 km ESE of Sijunjung, Indonesia","mag":4.5,"time":1777612646022},{"place":"47 km ENE of Pedro Bay, Alaska","mag":2.7,"time":1777609230456},{"place":"70 km ENE of Severo-Kuril’sk, Russia","mag":5.1,"time":1777608196561},{"place":"south of the Fiji Islands","mag":4.4,"time":1777606588247},{"place":"Nicobar Islands, India region","mag":4.8,"time":1777605170562},{"place":"10 km NNE of Brenas, Puerto Rico","mag":3.22,"time":1777601604250},{"place":"24 km W of Petrolia, CA","mag":3.69,"time":1777600721390},{"place":"74 km N of Hatillo, Puerto Rico","mag":3.08,"time":1777597325820},{"place":"southern Mid-Atlantic Ridge","mag":5,"time":1777596548859},{"place":"51 km SSE of Whites City, New Mexico","mag":2.6,"time":1777593431791},{"place":"85 km ESE of Kokopo, Papua New Guinea","mag":4.8,"time":1777589921560},{"place":"14 km N of Morgan Hill, CA","mag":2.81,"time":1777589017090},{"place":"49 km W of Petrolia, CA","mag":2.7,"time":1777583667480},{"place":"236 km SE of Attu Station, Alaska","mag":3.9,"time":1777576630486},{"place":"51 km NE of Manokwari, Indonesia","mag":4.3,"time":1777574193658},{"place":"Rat Islands, Aleutian Islands, Alaska","mag":3.6,"time":1777572901144},{"place":"Mid-Indian Ridge","mag":4.8,"time":1777570112427}]},"mark":{"type":"bar","tooltip":true},"title":"USGS earthquakes M≥2.5 (last 24h) — magnitude distribution","encoding":{"x":{"field":"mag","bin":true,"title":"Magnitude"},"y":{"aggregate":"count","title":"Count"}}});</script>
+<div id="babqua-plot-1"></div><script src="https://cdn.jsdelivr.net/npm/vega@5.33.1" integrity="sha384-NMXhl2TbCXxcN7o4ROC56Funm78m4AylL8gMg/7Kn4YU+wrm23K9l7cY8lDRXQ9d" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/vega-lite@5.23.0" integrity="sha384-D9LYH0esGjcxQJsBuxOuXtCDJGXRWW1+KhluzWPqi0rLJmiR/ygPChefaD+rFFDQ" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/vega-embed@6.29.0" integrity="sha384-M+Ax7e/WFJpxSOF09HzI+Sj4wg9ottVd/uxmV2ItGGh02fLH28t2FAOJx3TJBap5" crossorigin="anonymous"></script><script>vegaEmbed("#babqua-plot-1", {"data":{"values":[{"place":"93 km ESE of Kuqa, China","mag":4.3,"time":1777721653623},{"place":"153 km WNW of Neiafu, Tonga","mag":4.9,"time":1777721449471},{"place":"South Sandwich Islands region","mag":5,"time":1777717900811},{"place":"217 km W of Tual, Indonesia","mag":5.2,"time":1777717627609},{"place":"5 km SE of Ontario, CA","mag":2.55,"time":1777716646040},{"place":"28 km SE of El Negro, Puerto Rico","mag":2.88,"time":1777715122850},{"place":"17 km SW of Kōya, Japan","mag":5.7,"time":1777714120989},{"place":"Izu Islands, Japan region","mag":4.6,"time":1777710993795},{"place":"18 km NNW of Jal, New Mexico","mag":2.8,"time":1777707261749},{"place":"27 km SW of Esperanza, Puerto Rico","mag":2.97,"time":1777705903970},{"place":"79 km N of Calama, Chile","mag":4.6,"time":1777702962852},{"place":"43 km NNW of Chamical, Argentina","mag":5,"time":1777698296485},{"place":"22 km SSE of Pāhala, Hawaii","mag":2.58,"time":1777697167990},{"place":"111 km W of San Antonio de los Cobres, Argentina","mag":4.5,"time":1777694220734},{"place":"23 km NNE of Luquillo, Puerto Rico","mag":2.93,"time":1777693846210},{"place":"17 km SE of Silver Springs, Nevada","mag":2.97,"time":1777690168775},{"place":"south of the Fiji Islands","mag":5.1,"time":1777687596139},{"place":"161 km NNE of Cruz Bay, U.S. Virgin Islands","mag":3.77,"time":1777685085880},{"place":"92 km ESE of Kuqa, China","mag":4.4,"time":1777684494168},{"place":"17 km SE of Silver Springs, Nevada","mag":2.97,"time":1777680298046},{"place":"39 km S of Hayfork, CA","mag":2.67,"time":1777678306320},{"place":"99 km ESE of Kuqa, China","mag":4.4,"time":1777673876787},{"place":"218 km ESE of Kushimoto, Japan","mag":4.2,"time":1777670016115},{"place":"20 km ESE of Silver Springs, Nevada","mag":2.53,"time":1777666229858},{"place":"Kermadec Islands, New Zealand","mag":4.3,"time":1777662987856},{"place":"24 km WNW of Susitna, Alaska","mag":3,"time":1777662278571},{"place":"198 km NE of Lospalos, Timor Leste","mag":4.8,"time":1777661567403},{"place":"41 km N of Culebra, Puerto Rico","mag":3.28,"time":1777658281590},{"place":"4 km SW of Villa Canales, Guatemala","mag":3.2,"time":1777657851737},{"place":"47 km S of Nemuro, Japan","mag":4.8,"time":1777655964791},{"place":"236 km ESE of Attu Station, Alaska","mag":4.4,"time":1777652870607},{"place":"35 km ENE of Ensenada, B.C., MX","mag":2.63,"time":1777652182120},{"place":"5 km WNW of Mayagüez, Puerto Rico","mag":3.45,"time":1777651076770},{"place":"68 km N of Hatillo, Puerto Rico","mag":3.16,"time":1777647421130},{"place":"24 km NE of Ute Park, New Mexico","mag":2.9,"time":1777642563502},{"place":"93 km SE of Akutan, Alaska","mag":2.6,"time":1777641303447},{"place":"75 km ENE of Hasaki, Japan","mag":4.9,"time":1777640441206}]},"mark":{"type":"bar","tooltip":true},"title":"USGS earthquakes M≥2.5 (last 24h) — magnitude distribution","encoding":{"x":{"field":"mag","bin":true,"title":"Magnitude"},"y":{"aggregate":"count","title":"Count"}}});</script>
 </div>
 </div>
 <p>The whole pipeline — HTTP, JSON, transform, chart spec, render — happens inside <code>quarto render</code>.</p>
@@ -441,9 +441,9 @@ window.Quarto = {
 </div>
 <p>See <a href="./authoring.html#per-block-options">Per-block options</a> for the full set and precedence rules.</p>
 </section>
-<section id="html-table" class="level2" data-number="6.7">
-<h2 data-number="6.7" class="anchored" data-anchor-id="html-table"><span class="header-section-number">6.7</span> HTML table</h2>
-<p><code>:kind/table</code> renders tabular data on the Babashka side:</p>
+<section id="tables" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="tables"><span class="header-section-number">6.7</span> Tables</h2>
+<p><code>:kind/table</code> renders tabular data as a markdown pipe table, so Quarto’s native table styling applies:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>^<span class="at">:kind/table</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>[{<span class="at">:lang</span> <span class="st">"Clojure"</span>  <span class="at">:year</span> <span class="dv">2007</span> <span class="at">:host</span> <span class="st">"JVM"</span>}</span>
@@ -451,7 +451,37 @@ window.Quarto = {
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a> {<span class="at">:lang</span> <span class="st">"Jank"</span>     <span class="at">:year</span> <span class="dv">2019</span> <span class="at">:host</span> <span class="st">"C++/LLVM"</span>}</span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a> {<span class="at">:lang</span> <span class="st">"Cherry"</span>   <span class="at">:year</span> <span class="dv">2022</span> <span class="at">:host</span> <span class="st">"JS/SCI"</span>}]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
-<table><thead><tr><th>:lang</th><th>:year</th><th>:host</th></tr></thead><tbody><tr><td>Clojure</td><td>2007</td><td>JVM</td></tr><tr><td>Babashka</td><td>2020</td><td>GraalVM/SCI</td></tr><tr><td>Jank</td><td>2019</td><td>C++/LLVM</td></tr><tr><td>Cherry</td><td>2022</td><td>JS/SCI</td></tr></tbody></table>
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th>:lang</th>
+<th>:year</th>
+<th>:host</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Clojure</td>
+<td>2007</td>
+<td>JVM</td>
+</tr>
+<tr class="even">
+<td>Babashka</td>
+<td>2020</td>
+<td>GraalVM/SCI</td>
+</tr>
+<tr class="odd">
+<td>Jank</td>
+<td>2019</td>
+<td>C++/LLVM</td>
+</tr>
+<tr class="even">
+<td>Cherry</td>
+<td>2022</td>
+<td>JS/SCI</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </section>

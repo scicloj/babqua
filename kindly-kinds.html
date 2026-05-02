@@ -265,7 +265,7 @@ window.Quarto = {
   <li><a href="#kindecharts-echarts-charts" id="toc-kindecharts-echarts-charts" class="nav-link" data-scroll-target="#kindecharts-echarts-charts"><span class="header-section-number">3.11</span> <code>^:kind/echarts</code> — ECharts charts</a></li>
   <li><a href="#kindcytoscape-cytoscape-graphs" id="toc-kindcytoscape-cytoscape-graphs" class="nav-link" data-scroll-target="#kindcytoscape-cytoscape-graphs"><span class="header-section-number">3.12</span> <code>^:kind/cytoscape</code> — Cytoscape graphs</a></li>
   <li><a href="#kindhighcharts-highcharts-charts" id="toc-kindhighcharts-highcharts-charts" class="nav-link" data-scroll-target="#kindhighcharts-highcharts-charts"><span class="header-section-number">3.13</span> <code>^:kind/highcharts</code> — Highcharts charts</a></li>
-  <li><a href="#kindtable-html-tables" id="toc-kindtable-html-tables" class="nav-link" data-scroll-target="#kindtable-html-tables"><span class="header-section-number">3.14</span> <code>^:kind/table</code> — HTML tables</a></li>
+  <li><a href="#kindtable-tables" id="toc-kindtable-tables" class="nav-link" data-scroll-target="#kindtable-tables"><span class="header-section-number">3.14</span> <code>^:kind/table</code> — tables</a></li>
   <li><a href="#annotating-in-library-functions" id="toc-annotating-in-library-functions" class="nav-link" data-scroll-target="#annotating-in-library-functions"><span class="header-section-number">3.15</span> Annotating in library functions</a></li>
   <li><a href="#why-wrap-strings-in-vectors" id="toc-why-wrap-strings-in-vectors" class="nav-link" data-scroll-target="#why-wrap-strings-in-vectors"><span class="header-section-number">3.16</span> Why wrap strings in vectors?</a></li>
   <li><a href="#summary-of-kinds" id="toc-summary-of-kinds" class="nav-link" data-scroll-target="#summary-of-kinds"><span class="header-section-number">3.17</span> Summary of kinds</a></li>
@@ -374,7 +374,7 @@ window.Quarto = {
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>^<span class="at">:kind/mermaid</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>[<span class="st">"graph LR</span><span class="sc">\n</span><span class="st">  A[Start] --&gt; B{Decision}</span><span class="sc">\n</span><span class="st">  B --&gt;|Yes| C[OK]</span><span class="sc">\n</span><span class="st">  B --&gt;|No| D[Cancel]"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
-<div id="babqua-plot-1"></div><script src="https://cdn.jsdelivr.net/npm/mermaid@11.14.0/dist/mermaid.min.js" integrity="sha384-1CMXl090wj8Dd6YfnzSQUOgWbE6suWCaenYG7pox5AX7apTpY3PmJMeS2oPql4Gk" crossorigin="anonymous"></script><script>mermaid.initialize({ startOnLoad: false });mermaid.render("babqua-plot-1-svg", "graph LR\n  A[Start] --> B{Decision}\n  B -->|Yes| C[OK]\n  B -->|No| D[Cancel]").then(({svg}) => {document.getElementById("babqua-plot-1").innerHTML = svg;}).catch(e => {document.getElementById("babqua-plot-1").innerText = "Mermaid error: " + (e && e.message ? e.message : e);});</script>
+<div id="babqua-plot-1" class="mermaid"></div><script src="https://cdn.jsdelivr.net/npm/mermaid@11.14.0/dist/mermaid.min.js" integrity="sha384-1CMXl090wj8Dd6YfnzSQUOgWbE6suWCaenYG7pox5AX7apTpY3PmJMeS2oPql4Gk" crossorigin="anonymous"></script><script>mermaid.initialize({ startOnLoad: false });mermaid.render("babqua-plot-1-svg", "graph LR\n  A[Start] --> B{Decision}\n  B -->|Yes| C[OK]\n  B -->|No| D[Cancel]").then(({svg}) => {document.getElementById("babqua-plot-1").innerHTML = svg;}).catch(e => {document.getElementById("babqua-plot-1").innerText = "Mermaid error: " + (e && e.message ? e.message : e);});</script>
 </div>
 </div>
 </section>
@@ -495,9 +495,9 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="kindtable-html-tables" class="level2" data-number="3.14">
-<h2 data-number="3.14" class="anchored" data-anchor-id="kindtable-html-tables"><span class="header-section-number">3.14</span> <code>^:kind/table</code> — HTML tables</h2>
-<p>Renders tabular data as an HTML table. Two value shapes are accepted:</p>
+<section id="kindtable-tables" class="level2" data-number="3.14">
+<h2 data-number="3.14" class="anchored" data-anchor-id="kindtable-tables"><span class="header-section-number">3.14</span> <code>^:kind/table</code> — tables</h2>
+<p>Renders tabular data as a markdown pipe table, so Quarto’s native table styling applies. Two value shapes are accepted:</p>
 <p>A sequence of maps (header derived from union of keys):</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>^<span class="at">:kind/table</span></span>
@@ -505,7 +505,28 @@ window.Quarto = {
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a> {<span class="at">:lang</span> <span class="st">"Babashka"</span> <span class="at">:year</span> <span class="dv">2020</span>}</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a> {<span class="at">:lang</span> <span class="st">"Jank"</span>     <span class="at">:year</span> <span class="dv">2019</span>}]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
-<table><thead><tr><th>:lang</th><th>:year</th></tr></thead><tbody><tr><td>Clojure</td><td>2007</td></tr><tr><td>Babashka</td><td>2020</td></tr><tr><td>Jank</td><td>2019</td></tr></tbody></table>
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th>:lang</th>
+<th>:year</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Clojure</td>
+<td>2007</td>
+</tr>
+<tr class="even">
+<td>Babashka</td>
+<td>2020</td>
+</tr>
+<tr class="odd">
+<td>Jank</td>
+<td>2019</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <p>Or a column-vector form:</p>
@@ -516,7 +537,32 @@ window.Quarto = {
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                [<span class="dv">2</span> <span class="dv">4</span> <span class="dv">8</span>]</span>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                [<span class="dv">3</span> <span class="dv">9</span> <span class="dv">27</span>]]}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
-<table><thead><tr><th>x</th><th>x²</th><th>x³</th></tr></thead><tbody><tr><td>1</td><td>1</td><td>1</td></tr><tr><td>2</td><td>4</td><td>8</td></tr><tr><td>3</td><td>9</td><td>27</td></tr></tbody></table>
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th>x</th>
+<th>x²</th>
+<th>x³</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>4</td>
+<td>8</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>9</td>
+<td>27</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <p>The table is rendered on the Babashka side (via hiccup) and inserted as raw HTML, so styling can target it the same way as any other HTML table.</p>
@@ -649,7 +695,7 @@ window.Quarto = {
 <tr class="even">
 <td style="text-align: left;"><code>^:kind/table</code></td>
 <td style="text-align: left;">map or seq-of-maps</td>
-<td style="text-align: left;">HTML table</td>
+<td style="text-align: left;">table (markdown pipe table)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><em>(none)</em></td>

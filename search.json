@@ -350,11 +350,11 @@
     ]
   },
   {
-    "objectID": "kindly-kinds.html#kindtable-html-tables",
-    "href": "kindly-kinds.html#kindtable-html-tables",
+    "objectID": "kindly-kinds.html#kindtable-tables",
+    "href": "kindly-kinds.html#kindtable-tables",
     "title": "3  Kindly kinds",
-    "section": "3.14 ^:kind/table — HTML tables",
-    "text": "3.14 ^:kind/table — HTML tables\nRenders tabular data as an HTML table. Two value shapes are accepted:\nA sequence of maps (header derived from union of keys):\n\n^:kind/table\n[{:lang \"Clojure\"  :year 2007}\n {:lang \"Babashka\" :year 2020}\n {:lang \"Jank\"     :year 2019}]\n\n:lang:yearClojure2007Babashka2020Jank2019\n\n\nOr a column-vector form:\n\n^:kind/table\n{:column-names [\"x\" \"x²\" \"x³\"]\n :row-vectors  [[1 1 1]\n                [2 4 8]\n                [3 9 27]]}\n\nxx²x³1112483927\n\n\nThe table is rendered on the Babashka side (via hiccup) and inserted as raw HTML, so styling can target it the same way as any other HTML table.",
+    "section": "3.14 ^:kind/table — tables",
+    "text": "3.14 ^:kind/table — tables\nRenders tabular data as a markdown pipe table, so Quarto’s native table styling applies. Two value shapes are accepted:\nA sequence of maps (header derived from union of keys):\n\n^:kind/table\n[{:lang \"Clojure\"  :year 2007}\n {:lang \"Babashka\" :year 2020}\n {:lang \"Jank\"     :year 2019}]\n\n\n\n\n:lang\n:year\n\n\n\n\nClojure\n2007\n\n\nBabashka\n2020\n\n\nJank\n2019\n\n\n\n\n\nOr a column-vector form:\n\n^:kind/table\n{:column-names [\"x\" \"x²\" \"x³\"]\n :row-vectors  [[1 1 1]\n                [2 4 8]\n                [3 9 27]]}\n\n\n\n\nx\nx²\nx³\n\n\n\n\n1\n1\n1\n\n\n2\n4\n8\n\n\n3\n9\n27\n\n\n\n\n\nThe table is rendered on the Babashka side (via hiccup) and inserted as raw HTML, so styling can target it the same way as any other HTML table.",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Kindly kinds</span>"
     ]
@@ -384,7 +384,7 @@
     "href": "kindly-kinds.html#summary-of-kinds",
     "title": "3  Kindly kinds",
     "section": "3.17 Summary of kinds",
-    "text": "3.17 Summary of kinds\n\n\n\nKind\nValue type\nRenders as\n\n\n\n\n^:kind/hiccup\nvector (hiccup)\nHTML\n\n\n^:kind/html\n[string]\nraw HTML\n\n\n^:kind/md\n[string]\nmarkdown\n\n\n^:kind/hidden\nany\nnothing (evaluates silently)\n\n\n^:kind/mermaid\n[string]\nMermaid diagram\n\n\n^:kind/graphviz\n[string]\nGraphviz diagram\n\n\n^:kind/tex\n[string]\nLaTeX formula\n\n\n^:kind/code\n[string]\nsyntax-highlighted code\n\n\n^:kind/vega-lite\nmap\nVega-Lite chart\n\n\n^:kind/plotly\nmap\nPlotly chart\n\n\n^:kind/echarts\nmap\nECharts chart\n\n\n^:kind/cytoscape\nmap\nCytoscape graph\n\n\n^:kind/highcharts\nmap\nHighcharts chart\n\n\n^:kind/table\nmap or seq-of-maps\nHTML table\n\n\n(none)\nany\ncode output",
+    "text": "3.17 Summary of kinds\n\n\n\nKind\nValue type\nRenders as\n\n\n\n\n^:kind/hiccup\nvector (hiccup)\nHTML\n\n\n^:kind/html\n[string]\nraw HTML\n\n\n^:kind/md\n[string]\nmarkdown\n\n\n^:kind/hidden\nany\nnothing (evaluates silently)\n\n\n^:kind/mermaid\n[string]\nMermaid diagram\n\n\n^:kind/graphviz\n[string]\nGraphviz diagram\n\n\n^:kind/tex\n[string]\nLaTeX formula\n\n\n^:kind/code\n[string]\nsyntax-highlighted code\n\n\n^:kind/vega-lite\nmap\nVega-Lite chart\n\n\n^:kind/plotly\nmap\nPlotly chart\n\n\n^:kind/echarts\nmap\nECharts chart\n\n\n^:kind/cytoscape\nmap\nCytoscape graph\n\n\n^:kind/highcharts\nmap\nHighcharts chart\n\n\n^:kind/table\nmap or seq-of-maps\ntable (markdown pipe table)\n\n\n(none)\nany\ncode output",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Kindly kinds</span>"
     ]
@@ -484,7 +484,7 @@
     "href": "how-it-works.html#bb-side-runtime",
     "title": "5  How It Works",
     "section": "5.3 bb-side runtime",
-    "text": "5.3 bb-side runtime\nruntime.bb lives next to the Lua filter and gets load-file’d into the bb process at the start of every render. It defines:\n\nbabqua.runtime/eval-block — wraps a single user-provided source string in (do ...), reads it with read-string, evaluates it while capturing stdout into a StringWriter, inspects the metadata of the result, and dispatches by Kindly kind to a pre-rendering function.\nbabqua.runtime/run-blocks — switches *ns* to user (so defs persist in a clean namespace), then maps eval-block across the collected sources and returns a vector of result maps.\n\nThe pre-rendering helpers are dialect-native: hiccup2.core/html for hiccup, cheshire.core/generate-string for chart JSON, an inline hiccup-based table renderer for :kind/table, plain string passthrough for kind/html / kind/md / kind/mermaid / kind/graphviz / kind/tex / kind/code. Each result carries:\n\n:kind — the original Kindly kind keyword (string-encoded), or nil\n:format — a directive the Lua filter dispatches on: raw-html, chart, markdown, tex, mermaid, graphviz, code-display, code-default, hidden\n:rendered — the pre-formed payload (an HTML string, a JSON string, a source string, or pr-str of the value)\n:lib — for chart, the CDN library name (vega-lite, plotly, echarts, cytoscape, highcharts)\n:options — width / height passed via the value’s :kindly/options metadata, integer-validated\n:stdout — captured stdout, if any\n:error / :stack — present instead of :format if eval threw\n\nThe whole vector of results is serialized as JSON and printed on bb’s stdout. The Lua filter scans for the JSON line, decodes it via pandoc.json.decode, and dispatches.",
+    "text": "5.3 bb-side runtime\nruntime.bb lives next to the Lua filter and gets load-file’d into the bb process at the start of every render. It defines:\n\nbabqua.runtime/eval-block — wraps a single user-provided source string in (do ...), reads it with read-string, evaluates it while capturing stdout into a StringWriter, inspects the metadata of the result, and dispatches by Kindly kind to a pre-rendering function.\nbabqua.runtime/run-blocks — switches *ns* to user (so defs persist in a clean namespace), then maps eval-block across the collected sources and returns a vector of result maps.\n\nThe pre-rendering helpers are dialect-native: hiccup2.core/html for hiccup, cheshire.core/generate-string for chart JSON, a pipe-table markdown renderer for :kind/table (so Quarto’s native table styling applies), plain string passthrough for kind/html / kind/md / kind/mermaid / kind/graphviz / kind/tex / kind/code. Each result carries:\n\n:kind — the original Kindly kind keyword (string-encoded), or nil\n:format — a directive the Lua filter dispatches on: raw-html, chart, markdown, tex, mermaid, graphviz, code-display, code-default, hidden\n:rendered — the pre-formed payload (an HTML string, a JSON string, a source string, or pr-str of the value)\n:lib — for chart, the CDN library name (vega-lite, plotly, echarts, cytoscape, highcharts)\n:options — width / height passed via the value’s :kindly/options metadata, integer-validated\n:stdout — captured stdout, if any\n:error / :stack — present instead of :format if eval threw\n\nThe whole vector of results is serialized as JSON and printed on bb’s stdout. The Lua filter scans for the JSON line, decodes it via pandoc.json.decode, and dispatches.",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>How It Works</span>"
     ]
@@ -564,7 +564,7 @@
     "href": "demo.html#open-data-vega-lite",
     "title": "6  Demo",
     "section": "6.3 Open data + Vega-Lite",
-    "text": "6.3 Open data + Vega-Lite\nBabashka ships an HTTP client. Fetch some data and chart it without ever leaving the notebook.\n\n(require '[babashka.http-client :as http]\n         '[cheshire.core :as json])\n\nnil\n\n\n\n(def quakes\n  (-&gt; (http/get \"https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson\")\n      :body\n      (json/parse-string true)\n      :features\n      (-&gt;&gt; (map (fn [f]\n                  {:place (-&gt; f :properties :place)\n                   :mag   (-&gt; f :properties :mag)\n                   :time  (-&gt; f :properties :time)})))))\n\n\n(count quakes)\n\n36\n\n\n\n^:kind/vega-lite\n{:data {:values quakes}\n :mark {:type \"bar\" :tooltip true}\n :title \"USGS earthquakes M≥2.5 (last 24h) — magnitude distribution\"\n :encoding {:x {:field :mag :bin true :title \"Magnitude\"}\n            :y {:aggregate :count :title \"Count\"}}}\n\n\n\n\nThe whole pipeline — HTTP, JSON, transform, chart spec, render — happens inside quarto render.",
+    "text": "6.3 Open data + Vega-Lite\nBabashka ships an HTTP client. Fetch some data and chart it without ever leaving the notebook.\n\n(require '[babashka.http-client :as http]\n         '[cheshire.core :as json])\n\nnil\n\n\n\n(def quakes\n  (-&gt; (http/get \"https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson\")\n      :body\n      (json/parse-string true)\n      :features\n      (-&gt;&gt; (map (fn [f]\n                  {:place (-&gt; f :properties :place)\n                   :mag   (-&gt; f :properties :mag)\n                   :time  (-&gt; f :properties :time)})))))\n\n\n(count quakes)\n\n37\n\n\n\n^:kind/vega-lite\n{:data {:values quakes}\n :mark {:type \"bar\" :tooltip true}\n :title \"USGS earthquakes M≥2.5 (last 24h) — magnitude distribution\"\n :encoding {:x {:field :mag :bin true :title \"Magnitude\"}\n            :y {:aggregate :count :title \"Count\"}}}\n\n\n\n\nThe whole pipeline — HTTP, JSON, transform, chart spec, render — happens inside quarto render.",
     "crumbs": [
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Demo</span>"
     ]
@@ -600,11 +600,11 @@
     ]
   },
   {
-    "objectID": "demo.html#html-table",
-    "href": "demo.html#html-table",
+    "objectID": "demo.html#tables",
+    "href": "demo.html#tables",
     "title": "6  Demo",
-    "section": "6.7 HTML table",
-    "text": "6.7 HTML table\n:kind/table renders tabular data on the Babashka side:\n\n^:kind/table\n[{:lang \"Clojure\"  :year 2007 :host \"JVM\"}\n {:lang \"Babashka\" :year 2020 :host \"GraalVM/SCI\"}\n {:lang \"Jank\"     :year 2019 :host \"C++/LLVM\"}\n {:lang \"Cherry\"   :year 2022 :host \"JS/SCI\"}]\n\n:lang:year:hostClojure2007JVMBabashka2020GraalVM/SCIJank2019C++/LLVMCherry2022JS/SCI",
+    "section": "6.7 Tables",
+    "text": "6.7 Tables\n:kind/table renders tabular data as a markdown pipe table, so Quarto’s native table styling applies:\n\n^:kind/table\n[{:lang \"Clojure\"  :year 2007 :host \"JVM\"}\n {:lang \"Babashka\" :year 2020 :host \"GraalVM/SCI\"}\n {:lang \"Jank\"     :year 2019 :host \"C++/LLVM\"}\n {:lang \"Cherry\"   :year 2022 :host \"JS/SCI\"}]\n\n\n\n\n:lang\n:year\n:host\n\n\n\n\nClojure\n2007\nJVM\n\n\nBabashka\n2020\nGraalVM/SCI\n\n\nJank\n2019\nC++/LLVM\n\n\nCherry\n2022\nJS/SCI",
     "crumbs": [
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Demo</span>"
     ]
